@@ -217,118 +217,6 @@ def __train(arg):
         model.fit(M=labels_components, W=W, H=H, X=X, y=y, P=P, E=E, A=A, B=B, model_name=arg.model_name,
                   model_path=arg.mdpath, result_path=arg.rspath, display_params=display_params)
 
-    ##########################################################################################################
-    ######################                   EVALUATE USING triUMPF                     ######################
-    ##########################################################################################################
-
-    if arg.evaluate:
-        print('\n{0})- Evaluating triUMPF model...'.format(steps))
-        steps = steps + 1
-
-        # load files
-        print('\t>> Loading files...')
-        labels_components = load_data(file_name=arg.M_name, load_path=arg.dspath, tag='M')
-        W = load_data(file_name=arg.W_name, load_path=arg.mdpath, tag='W')
-        H = load_data(file_name=arg.H_name, load_path=arg.mdpath, tag='H')
-
-        # load model
-        model = load_data(file_name=arg.model_name + '.pkl', load_path=arg.mdpath, tag='triUMPF model')
-
-        P, E, A, B, X, y = None, None, None, None, None, None
-
-        if model.fit_features:
-            P = load_data(file_name=arg.P_name, load_path=arg.dspath, tag='P')
-            E = load_data(file_name=arg.E_name, load_path=arg.dspath, tag='E')
-        if model.fit_comm:
-            if not model.fit_features:
-                P = load_data(file_name=arg.P_name, load_path=arg.dspath, tag='P')
-                E = load_data(file_name=arg.E_name, load_path=arg.dspath, tag='E')
-            X = load_data(file_name=arg.X_name, load_path=arg.dspath, tag='X')
-            y = load_data(file_name=arg.y_name, load_path=arg.dspath, tag='X')
-            A = load_data(file_name=arg.A_name, load_path=arg.dspath, tag='A')
-            B = load_data(file_name=arg.B_name, load_path=arg.dspath, tag='B')
-            C = load_data(file_name=arg.model_name + "_C.pkl", load_path=arg.mdpath, tag='C')
-            K = load_data(file_name=arg.model_name + "_K.pkl", load_path=arg.mdpath, tag='K')
-            T = load_data(file_name=arg.model_name + "_T.pkl", load_path=arg.mdpath, tag='T')
-            R = load_data(file_name=arg.model_name + "_R.pkl", load_path=arg.mdpath, tag='R')
-
-        # load a biocyc file
-        data_object = load_data(file_name=arg.object_name, load_path=arg.ospath, tag='the biocyc object')
-        pathway_dict = data_object["pathway_id"]
-        ec_dict = data_object["ec_id"]
-        del data_object
-        pathway_dict = dict((idx, id) for id, idx in pathway_dict.items())
-        ec_dict = dict((idx, id) for id, idx in ec_dict.items())
-
-        # reconstruction error
-        M_hat = model.inverse_transform(X1=W.toarray(), X2=H.toarray())
-        err = model.rec_err(M=labels_components.toarray(), M_hat=M_hat.toarray())
-        print("\t>> Reconstruction error of the association matrix: {0:.4f}".format(err))
-        file_name = arg.file_name + '_rec_error.txt'
-        save_data(data="# Reconstruction error of the association matrix: {0:.4f}\n".format(err),
-                  file_name=file_name, save_path=arg.rspath, tag="reconstruction error",
-                  mode='w', w_string=True, print_tag=True)
-        if model.fit_comm:
-            A_hat = model.inverse_transform(X1=P.toarray(), X2=C.toarray(), X3=T.toarray(), comm=True)
-            err = model.rec_err(M=A.toarray(), M_hat=A_hat.toarray())
-            print("\t>> Reconstruction error of label community: {0:.4f}".format(err))
-            save_data(data="# Reconstruction error of label community: {0:.4f}\n".format(err),
-                      file_name=file_name, save_path=arg.rspath, tag="reconstruction error",
-                      mode='a', w_string=True, print_tag=False)
-
-            B_hat = model.inverse_transform(X1=E.toarray(), X2=K.toarray(), X3=R.toarray(), comm=True)
-            err = model.rec_err(M=B.toarray(), M_hat=B_hat.toarray())
-            print("\t>> Reconstruction error of features community: {0:.4f}".format(err))
-            save_data(data="# Reconstruction error of features community: {0:.4f}".format(err),
-                      file_name=file_name, save_path=arg.rspath, tag="reconstruction error",
-                      mode='a', w_string=True, print_tag=False)
-
-            # labels prediction score
-            y_pred = model.predict(X=X.toarray(), estimate_prob=arg.estimate_prob,
-                                   apply_t_criterion=arg.apply_tcriterion,
-                                   adaptive_beta=arg.adaptive_beta, decision_threshold=arg.decision_threshold,
-                                   top_k=arg.top_k, batch_size=arg.batch, num_jobs=arg.num_jobs)
-            file_name = arg.file_name + '_scores.txt'
-            score(y_true=y.toarray(), y_pred=y_pred.toarray(), item_lst=['biocyc'], six_db=False, mode='a',
-                  file_name=file_name, save_path=arg.rspath)
-            score(y_true=y.toarray(), y_pred=y_pred.toarray(), item_lst=['biocyc'], six_db=True, mode='a',
-                  file_name=file_name, save_path=arg.rspath)
-            # top features per cluster
-            clusters_dict = model.get_top_features(X=H.toarray(), feature_names=ec_dict, top_k_features=arg.top_k)
-            print("\t>> Clusters with top {0} features...".format(arg.top_k))
-            file_name = arg.file_name + '_clusters.txt'
-            save_data(data="# Clusters with top {0} features...\n".format(arg.top_k),
-                      file_name=file_name, save_path=arg.rspath,
-                      tag="clusters", mode='w', w_string=True, print_tag=True)
-            for cluster_idx, features in clusters_dict.items():
-                save_data(data="  >> Cluster {0}: {1}\n".format(cluster_idx, ', '.join(str(feat) for feat in features)),
-                          file_name=file_name, save_path=arg.rspath, mode='a',
-                          w_string=True, print_tag=False)
-
-        if model.fit_comm:
-            # top features per communty
-            communities_dict = model.get_top_features(X=C.toarray(), feature_names=pathway_dict,
-                                                      top_k_features=arg.top_k)
-            print("\t>> Communities with top {0} features...".format(arg.top_k))
-
-            file_name = arg.file_name + '_pathway_communities.txt'
-            save_data(data="# Communities with top {0} features...\n".format(arg.top_k),
-                      file_name=file_name, save_path=arg.rspath, tag="communities", mode='w',
-                      w_string=True, print_tag=True)
-            for community_idx, features in communities_dict.items():
-                save_data(
-                    data="  >> Community {0}: {1}\n".format(community_idx, ', '.join(str(feat) for feat in features)),
-                    file_name=file_name, save_path=arg.rspath, mode='a', w_string=True,
-                    print_tag=False)
-
-            communities_dict = model.get_top_features(X=K.toarray(), feature_names=ec_dict, top_k_features=arg.top_k)
-            file_name = arg.file_name + '_ec_communities.txt'
-            save_data(data="\n# Communities with top {0} features...\n".format(arg.top_k),
-                      file_name=file_name, save_path=arg.rspath, mode='a', w_string=True, print_tag=False)
-            for community_idx, features in communities_dict.items():
-                save_data(
-                    data="  >> Community {0}: {1}\n".format(community_idx, ', '.join(str(feat) for feat in features)),
-                    file_name=file_name, save_path=arg.rspath, mode='a', w_string=True, print_tag=False)
 
     ##########################################################################################################
     ######################                    PREDICT USING triUMPF                     ######################
@@ -414,14 +302,12 @@ def __train(arg):
 
 def train(arg):
     try:
-        if arg.preprocess_dataset or arg.train or arg.evaluate or arg.predict:
+        if arg.preprocess_dataset or arg.train or arg.predict:
             actions = list()
             if arg.preprocess_dataset:
                 actions += ['PREPROCESS DATASETs']
             if arg.train:
                 actions += ['TRAIN MODELs']
-            if arg.evaluate:
-                actions += ['EVALUATE MODELs']
             if arg.predict:
                 actions += ['PREDICT RESULTS USING SPECIFIED MODELs']
             desc = [str(item[0] + 1) + '. ' + item[1] for item in zip(list(range(len(actions))), actions)]

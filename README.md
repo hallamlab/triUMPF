@@ -14,78 +14,87 @@ This repo contains an implementation of triUMPF(**tri**ple non-negative matrix f
 - [scipy](https://www.scipy.org/index.html)
 
 ## Objects
-- Please download the files: "ec_graph.pkl", "compound_graph.pkl", "pathway_graph.pkl", "ec2compound.pkl", "compound2pathway.pkl", and "ec2pathway.pkl" from: [HallamLab](https://github.com/hallamlab)
-- You need to generate a heterogeneous information network. A sample can be obtained for the experimental purposes from [hin.pkl](https://github.com/hallamlab).
+- Please download the files: "biocyc.pkl", "pathway2ec.pkl", "pathway2ec_idx.pkl", "biocyc_X.pkl", "biocyc_Xe.pkl", "biocyc_y.pkl", "cami_X.pkl", "cami_Xe.pkl", "cami_y.pkl", "M.pkl", "P.pkl", "E.pkl", "A.pkl", and "B.pkl" from: [HallamLab](https://github.com/hallamlab)
+- You need to generate a heterogeneous information network. A preprocessed hin file can be obtained for the experimental purposes from [hin_cmt.pkl](https://github.com/hallamlab).
+- Also, please do provide features obtained from [pathway2vec](https://github.com/hallamlab/pathway2vec). A sample of features can be obtained for the experimental purposes from [path2vec_cmt_tf_embeddings.npz](https://github.com/hallamlab).
 
 ## Basic Usage
 To display *triUMPF*'s running options, use: `python main.py --help`. It should be self-contained. 
 ### Preprocessing graph
-To preprocess graphs, we provide few examples:
+
 #### Example 1
-To preprocess three layer graph **all connected**, execute the following command:
-``python main.py --preprocess-dataset --first-graph-name "ec_graph.pkl" --second-graph-name "compound_graph.pkl" --third-graph-name "pathway_graph.pkl" --first-mapping-file-name "ec2compound.pkl" --second-mapping-file-name "compound2pathway.pkl" --hin-file "[Name of the hin file].pkl" --ospath [LOCATION to ALL the Files] --num-jobs 2``
-where *--hin-file* corresponds to the desired generated file name, ending with *.pkl*.
+To preprocess datasets with **no noise** to the pathway2ec association matrix ("pathway2ec.pkl"), execute the following command:
+
+``python main.py --preprocess-dataset --ssample-input-size 1 --object-name "biocyc.pkl" --pathway2ec-name "pathway2ec.pkl" --pathway2ec-pidx-name "pathway2ec_idx.pkl" --features-name "path2vec_cmt_tf_embeddings.npz" --hin-name "hin_cmt.pkl" --mdpath [Location of the features] --ospath [Location to all objects except features]``
+
+where *--hin-file* corresponds to the hin file name, ending with *.pkl*.
 
 #### Example 2
-To preprocess three layer graph **excluding the connection of the first graph**, execute the following command:
-``python main.py --preprocess-dataset --first-graph-not-connected --first-graph-name "ec_graph.pkl" --second-graph-name "compound_graph.pkl" --third-graph-name "pathway_graph.pkl" --first-mapping-file-name "ec2compound.pkl" --second-mapping-file-name "compound2pathway.pkl" --hin-file "[Name of the hin file].pkl" --ospath [LOCATION to ALL the Files] --num-jobs 2``
-where *--hin-file* corresponds to the desired generated file name, ending with *.pkl*. The argument *--first-graph-not-connected* enables exclusion of connection among the nodes in the first layer.
+To preprocess datasets with **20% noise** to the pathway2ec association matrix ("pathway2ec.pkl"), execute the following command:
+
+``python main.py --preprocess-dataset --ssample-input-size 0.2 --object-name "biocyc.pkl" --pathway2ec-name "pathway2ec.pkl" --pathway2ec-pidx-name "pathway2ec_idx.pkl" --features-name "path2vec_cmt_tf_embeddings.npz" --hin-name "hin_cmt.pkl" --mdpath [Location of the features] --ospath [Location to all objects except features]``
+
+where *--hin-file* corresponds to the hin file name, ending with *.pkl*.
 
 #### Example 3
-To preprocess three layer graph while **removing isolates**, execute the following command:
-``python main.py --preprocess-dataset --remove-isolates --first-graph-name "ec_graph.pkl" --second-graph-name "compound_graph.pkl" --third-graph-name "pathway_graph.pkl" --first-mapping-file-name "ec2compound.pkl" --second-mapping-file-name "compound2pathway.pkl" --hin-file "[Name of the hin file].pkl" --ospath [LOCATION to ALL the Files] --num-jobs 2``
-where *--hin-file* corresponds to the desired generated file name, ending with *.pkl*. The argument *--remove-isolates* enables the isolation of nodes less than 2 connectivity.
+To preprocess datasets with **20% noise** to the pathway2ec association (*pathway2ec.pkl*), the pathway to pathway association (*A*), and the EC to EC association (*B*) matrices, execute the following command:
 
-#### Example 4
-To preprocess **two layers graph**, execute the following command:
-``python main.py --preprocess-dataset --exclude-third-graph --first-graph-name "ec_graph.pkl" --second-graph-name "pathway_graph.pkl" --first-mapping-file-name "ec2pathway.pkl" --hin-file "[Name of the hin file].pkl" --ospath [LOCATION to ALL the Files] --num-jobs 2``
-where *--hin-file* corresponds to the desired generated file name, ending with *.pkl*. The argument *--exclude-third-graph* enables the including two layers only.
+``python main.py --preprocess-dataset --white-links --ssample-input-size 0.2 --object-name "biocyc.pkl" --pathway2ec-name "pathway2ec.pkl" --pathway2ec-pidx-name "pathway2ec_idx.pkl" --features-name "path2vec_cmt_tf_embeddings.npz" --hin-name "hin_cmt.pkl" --mdpath [Location of the features] --ospath [Location to all objects except features]``
 
-### Generate Walks
-To generate walks, we provide few examples:
-#### Example 1
-To generate *node2vec* random walks, execute the following command:
-``python main.py --extract-instance --q 0.5 --hin-file "[Name of the hin file].pkl" --file-name "[Name of the file without extension]" --ospath [Location to the hin file] --dspath [Location to store the generated walks] --num-jobs 10``
-where *--file-name* corresponds to the desired file name, excluding any *EXTENSION*. The file will have *.txt* extension. The argument *--q* represents in-out parameter that allows the search to differentiate between "inward" and "outward" nodes. The return parameter that controls the likelihood of immediately revisiting a node in the walk will be automatically adjusted.
+where *--hin-file* corresponds to the hin file name, ending with *.pkl*.
 
-#### Example 2
-To generate *metapath2vec* random walks, execute the following command:
-``python main.py --extract-instance --metapath-scheme "ECTCE" --use-metapath-scheme --hin-file "[Name of the hin file].pkl" --file-name "[Name of the file without extension]" --ospath [Location to the hin file] --dspath [Location to store the generated walks] --num-jobs 10``
-where *--file-name* corresponds to the desired file name, excluding any *EXTENSION*. The file will have *.txt* extension.
-
-#### Example 3
-To generate *JUST* random walks, execute the following command:
-``python main.py --extract-instance --q 0.5 --just-type --just-memory-size 2 --hin-file "[Name of the hin file].pkl" --file-name "[Name of the file without extension]" --ospath [Location to the hin file] --dspath [Location to store the generated walks] --num-jobs 10``
-where *--file-name* corresponds to the desired file name, excluding any *EXTENSION*. The file will have *.txt* extension.
-
-#### Example 4
-To generate *RUST* random walks, execute the following command with :
-``python main.py --extract-instance --burn-in-phase 3 --q 0.3 --just-type --just-memory-size 3 --hin-file "[Name of the hin file].pkl" --file-name "[Name of the file without extension]" --ospath [Location to the hin file] --dspath [Location to store the generated walks] --num-jobs 10``
-where *--file-name* corresponds to the desired file name, excluding any *EXTENSION*. The file will have *.txt* extension. The argument *--q* represents the probability to explore within layer nodes (breadth-search). The in-depth search will be automatically adjusted based on unit circle equation.
 
 ### Train
-To learn embeddings using the random walks, we provide few examples:
+For trainning, we provide few examples:
 #### Example 1
-To learn embeddings using dimension size *--embedding-dim* 128, context size *--window-size* 3, Number of samples to be considered within defined context size *--num-skips* 2, execute the following command:
-``python main.py --train --embedding-dim 128 --num-skips 2 --window-size 3 --hin-file "[Name of the hin file].pkl" --file-name "[Name of the .txt file]" --model-name "[Model name without extension]" --mdpath [Location for storing the learned embeddings] --rspath [Location for storing costs] --num-epochs 1 --num-jobs 10``
-where *--file-name* corresponds to the *.txt* generate walks and *--model-name* corresponds the name of the models (excluding any *EXTENSION*). The model name will have *.npz* extension. 
+To **decompose** *M* of 100 components, execute the following command:
+
+``python main.py --train --num-components 100 --lambdas 0.01 0.01 0.01 0.01 0.001 10 --M-name "M.pkl" --model-name "[Model name without extension]" --mdpath "[Location of the model]" --logpath "[Location to the log directory]" --batch 50 --max-inner-iter 5 --num-epochs 100 --num-jobs 2``
+
+where *--M-name* is the pathway2ec association matrix file name and *--model-name* corresponds the name of the model, excluding any *EXTENSION*. The model name will have *.pkl* extension.
 
 #### Example 2
-To learn embeddings using the same above parameter settings but with *metapath2vec++*, execute the following command:
-``python main.py --train --constraint-type --embedding-dim 128 --num-skips 2 --window-size 3 --hin-file "[Name of the hin file].pkl" --file-name "[Name of the .txt file]" --model-name "[Model name without extension]" --mdpath [Location for storing the learned embeddings] --rspath [Location for storing costs] --num-epochs 1 --num-jobs 10``
-where *--file-name* corresponds to the *.txt* generate walks, *--model-name* corresponds the name of the models, excluding any *EXTENSION*. The model name will have *.npz* extension, and *--constraint-type* enables the normalized skip gram model.
+To **decompose** *M* of 100 components by using **features**, execute the following command:
+
+``python main.py --train --fit-features --num-components 100 --lambdas 0.01 0.01 0.01 0.01 0.001 10 --M-name "M.pkl" --P-name "P.pkl" --E-name "E.pkl" --model-name "[Model name without extension]" --mdpath "[Location of the model]" --logpath "[Location to the log directory]" --batch 50 --max-inner-iter 5 --num-epochs 100 --num-jobs 2``
+
+where *--M-name* is the pathway2ec association matrix file name and *--model-name* corresponds the name of the model, excluding any *EXTENSION*. The model name will have *.pkl* extension. The arguments *--P-name* corresponds the pathway features file name and *--E-name* is the EC features file name.
+
+#### Example 3
+If you wish to train multi-label dataset by **decomposing** *M* of 100 components while using **features** and **community**, execute the following command:
+
+``python main.py --train --fit-features --fit-comm --binarize --use-external-features --cutting-point 3650 --num-components 100 --lambdas 0.01 0.01 0.01 0.01 0.001 10 --M-name "M.pkl" --P-name "P.pkl" --E-name "E.pkl"  --A-name "A.pkl" --B-name "B.pkl" --X-name "biocyc_Xe.pkl" --y-name "biocyc_y.pkl" --model-name "[Model name without extension]" --mdpath "[Location of the model]" --dspath "[Location of the dataset]" --logpath "[Location to the log directory]" --batch 50 --max-inner-iter 5 --num-epochs 100 --num-jobs 2``
+
+where *--cutting-point* is the cutting point after which binarize operation is halted in the input data, *--M-name* is the pathway2ec association matrix file name and *--model-name* corresponds the name of the model, excluding any *EXTENSION*. The model name will have *.pkl* extension. The arguments *--P-name* corresponds the pathway features file name, *--E-name* is the EC features file name, *--A-name* is the pathway to pathway association file name, *--B-name* corresponds the EC to EC association file name, *--X-name* is the input space of multi-label data, and *--y-name* is the pathway space of multi-label data. For the dataset, any multi-label dataset can be employed.
+
+#### Example 4
+If you wish to use the previously **decomposed** *M* of 100 components to train multi-label dataset while using **features** and **community**, execute the following command:
+
+``python main.py --train --no-decomposition --fit-features --fit-comm --binarize --use-external-features --cutting-point 3650 --num-components 100 --lambdas 0.01 0.01 0.01 0.01 0.001 10 --W-name "[Generated .pkl W file]" --H-name "[Generated .pkl H file]"  --P-name "P.pkl" --E-name "E.pkl"  --A-name "A.pkl" --B-name "B.pkl" --X-name "biocyc_Xe.pkl" --y-name "biocyc_y.pkl" --model-name "[Model name without extension]" --mdpath "[Location of the model]" --dspath "[Location of the dataset]" --logpath "[Location to the log directory]" --batch 50 --max-inner-iter 5 --num-epochs 100 --num-jobs 2``
+
+where *--cutting-point* is the cutting point after which binarize operation is halted in the input data, *--W-name* is the W parameter, *--H-name* is the H parameter, and *--model-name* corresponds the name of the model, excluding any *EXTENSION*. The model name will have *.pkl* extension. The arguments *--P-name* corresponds the pathway features file name, *--E-name* is the EC features file name, *--A-name* is the pathway to pathway association file name, *--B-name* corresponds the EC to EC association file name, *--X-name* is the input space of multi-label data, and *--y-name* is the pathway space of multi-label data. For the dataset, any multi-label dataset can be employed.
+
+### Predict
+For inference, we provide few examples:
+#### Example 1
+To **predict** outputs from a dataset using already trained model with decomposed *M* of 100 components while using **features** and **community**, execute the following command:
+
+``python main.py --predict --cutting-point 3650 --decision-threshold 0.5 --X-name 'cami_Xe.pkl' --file-name "[Various results file names without extension]" --model-name "[Model name without extension]" --dspath "[Location of the dataset and to store predicted results]" --mdpath "[Location of the model]" --logpath "[Location to the log directory]" --batch 50 --num-jobs 15``
+
+where *--cutting-point* is the cutting point after which binarize operation is halted in the input data, *--decision-threshold* corresponds the cutoff threshold for prediction, and *--model-name* corresponds the name of the model, excluding any *EXTENSION*. The model name will have *.pkl* extension. For the dataset, any multi-label dataset can be employed.
 
 #### Example 2
-To learn embeddings using the same above parameter settings but with *metapath2vec++* and trained using *gensim* package, execute the following command:
-``python main.py --train --fit-by-word2vec --constraint-type --embedding-dim 128 --num-skips 2 --window-size 3 --hin-file "[Name of the hin file].pkl" --file-name "[Name of the .txt file]" --model-name "[Model name without extension]" --mdpath [Location for storing the learned embeddings] --rspath [Location for storing costs] --num-epochs 1 --num-jobs 10``
-where *--file-name* corresponds to the *.txt* generate walks, *--model-name* corresponds the name of the models, excluding any *EXTENSION*. The model name will have *.npz* extension, *--constraint-type* enables the normalized skip gram model, and *fit-by-word2vec* enables to train using gensim package.
+
+To **predict** outputs and **compile pathway report** from a dataset, generated by MetaPath v2, using already trained model with decomposed *M* of 100 components while using **features** and **community**, execute the following command:
+
+``python main.py --predict --pathway-report --cutting-point 3650 --decision-threshold 0.5 --object-name "biocyc.pkl" --pathway2ec-idx-name "pathway2ec_idx.pkl" --pathway2ec-name 'pathway2ec.pkl' --hin-name "hin_cmt.pkl" --features-name "path2vec_cmt_tf_embeddings.npz" --X-name 'cami_Xe.pkl' --file-name "[Various results file names without extension]" --model-name "[Model name without extension]" --rsfolder "[Name of the main folder]" --dspath "[Location of the dataset and to store predicted results]" --mdpath "[Location of the model]" --rspath "[Location for storing results]" --logpath "[Location to the log directory]" --batch 50 --num-jobs 15``
+
+where *--pathway-report* enables to generate a detailed report for pathways for each instance, *--cutting-point* is the cutting point after which binarize operation is halted in the input data, *--decision-threshold* corresponds the cutoff threshold for prediction, and *--model-name* corresponds the name of the model, excluding any *EXTENSION*. The model name will have *.pkl* extension. For the dataset, any multi-label dataset can be employed.
+
 
 ## Citing
-If you employ _path2vec_ in your research, please consider citing the following paper presented at PLOS 2019:
-- M. A. Basher, Abdur Rahman, and Steven J. Hallam. **["pathway2vec: Learning Metabolic Pathways Representations as Graph Heterogeneous Network."](https://github.com/atante/xXx.pdf)**, Proceedings of xXx (2019).
+If you employ *triUMPF* in your research, please consider citing the following paper presented at bioRxiv 2020:
+- M. A. Basher, Abdur Rahman, McLaughlin, Ryan J., and Hallam, Steven J.. **["Metabolic pathway inference using non-negative matrix factorization with community detection."](https://github.com/atante/xXx.pdf)**, Proceedings of bioRxiv (2020).
 
 ## Contact
 For any inquiries, please contact: [arbasher@alumni.ubc.ca](mailto:arbasher@alumni.ubc.ca)
-
-## To do list
-- Make the random walks generation more efficient.

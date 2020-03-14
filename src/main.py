@@ -98,7 +98,6 @@ def __internal_args(parse_args):
     ##########################################################################################################
 
     arg.train = parse_args.train
-    arg.evaluate = parse_args.evaluate
     arg.predict = parse_args.predict
     arg.pathway_report = parse_args.pathway_report
     arg.extract_pf = True
@@ -230,8 +229,6 @@ def parse_command_line():
     # Arguments for training and evaluation
     parser.add_argument('--train', action='store_true', default=False,
                         help='Whether to train the triUMPF model. (default value: False).')
-    parser.add_argument('--evaluate', action='store_true', default=False,
-                        help='Whether to evaluate triUMPF\'s performances. (default value: False).')
     parser.add_argument('--predict', action='store_true', default=False,
                         help='Whether to predict labels from inputs. (default value: False).')
     parser.add_argument('--pathway-report', action='store_true', default=False,
