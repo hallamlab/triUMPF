@@ -3,15 +3,17 @@ This file is the main entry used to train the input dataset
 using triUMPF train and also report the predicted vocab.
 '''
 
-import networkx as nx
-import numpy as np
 import os
 import sys
 import time
 import traceback
+
+import networkx as nx
+import numpy as np
 from model.triumpf import triUMPF
 from scipy.sparse import lil_matrix, hstack
 from sklearn import preprocessing
+from sklearn.utils._joblib import Parallel, delayed
 from utility.access_file import load_data, save_data
 from utility.model_utils import score, synthesize_report, compute_abd_cov
 from utility.parse_input import parse_files
@@ -196,7 +198,6 @@ def __train(arg):
             A = load_data(file_name=arg.A_name, load_path=arg.dspath, tag='A')
             B = load_data(file_name=arg.B_name, load_path=arg.dspath, tag='B')
 
-
         model = triUMPF(num_components=arg.num_components, num_communities_p=arg.num_communities_p,
                         num_communities_e=arg.num_communities_e, proxy_order_p=arg.proxy_order_p,
                         proxy_order_e=arg.proxy_order_e, mu_omega=arg.mu_omega, mu_gamma=arg.mu_gamma,
@@ -205,9 +206,8 @@ def __train(arg):
                         binarize_input_feature=arg.binarize_input_feature,
                         use_external_features=arg.use_external_features, cutting_point=arg.cutting_point,
                         fit_intercept=arg.fit_intercept, alpha=arg.alpha, beta=arg.beta, rho=arg.rho,
-                        lambdas=arg.lambdas,
-                        eps=arg.eps, early_stop=arg.early_stop, penalty=arg.penalty, alpha_elastic=arg.alpha_elastic,
-                        l1_ratio=arg.l1_ratio, loss_threshold=arg.loss_threshold,
+                        lambdas=arg.lambdas, eps=arg.eps, early_stop=arg.early_stop, penalty=arg.penalty,
+                        alpha_elastic=arg.alpha_elastic, l1_ratio=arg.l1_ratio, loss_threshold=arg.loss_threshold,
                         decision_threshold=arg.decision_threshold, subsample_input_size=arg.ssample_input_size,
                         subsample_labels_size=arg.ssample_label_size, learning_type=arg.learning_type, lr=arg.lr,
                         lr0=arg.lr0, delay_factor=arg.delay_factor, forgetting_rate=arg.forgetting_rate,
@@ -215,8 +215,7 @@ def __train(arg):
                         num_jobs=arg.num_jobs, display_interval=arg.display_interval, shuffle=arg.shuffle,
                         random_state=arg.random_state, log_path=arg.logpath)
         model.fit(M=labels_components, W=W, H=H, X=X, y=y, P=P, E=E, A=A, B=B, model_name=arg.model_name,
-                  model_path=arg.mdpath,
-                  result_path=arg.rspath, display_params=display_params)
+                  model_path=arg.mdpath, result_path=arg.rspath, display_params=display_params)
 
     ##########################################################################################################
     ######################                   EVALUATE USING triUMPF                     ######################
