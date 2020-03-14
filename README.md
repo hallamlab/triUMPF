@@ -86,8 +86,8 @@ where *--pathway-report* enables to generate a detailed report for pathways for 
 
 
 ## Citing
-If you employ *triUMPF* in your research, please consider citing the following paper presented at bioRxiv 2020:
-- M. A. Basher, Abdur Rahman, McLaughlin, Ryan J., and Hallam, Steven J.. **["Metabolic pathway inference using non-negative matrix factorization with community detection."](https://github.com/atante/xXx.pdf)**, Proceedings of bioRxiv (2020).
+If you employ *triUMPF* in your research, please consider citing the following paper:
+- M. A. Basher, Abdur Rahman, McLaughlin, Ryan J., and Hallam, Steven J.. **["Metabolic pathway inference using non-negative matrix factorization with community detection."](https://github.com/arbasher/xXx.pdf)**, bioRxiv (2020).
 
 ## Contact
 For any inquiries, please contact: [arbasher@alumni.ubc.ca](mailto:arbasher@alumni.ubc.ca)
