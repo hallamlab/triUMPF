@@ -4,7 +4,7 @@
 This repo contains an implementation of triUMPF(**tri**ple non-negative matrix factorization with comm**u**nity detection to **m**etabolic **p**athway in**f**erence) that combines three stages of NMF to capture relationships between enzymes and pathways within a network followed by community detection to extract higher order structure based on the clustering of vertices sharing similar functional features. We evaluated triUMPF performance using experimental datasets manifesting diverse multi-label properties, including Tier 1 genomes from the BioCyc collection of organismal Pathway/Genome Databases and low complexity microbial communities. Resulting performance metrics equaled or exceeded other prediction methods on organismal genomes with improved prediction outcomes on multi-organism data sets.
 
 ## Dependencies
-- The codebase is tested to work under Python 3.7. To install the necessary requirements, run the following commands:
+The codebase is tested to work under Python 3.7. To install the necessary requirements, run the following commands:
 
 ``pip install -r requirements.txt``
 
