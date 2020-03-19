@@ -138,4 +138,4 @@ If you find *triUMPF* useful in your research, please consider citing the follow
 For any inquiries, please contact: [arbasher@alumni.ubc.ca](mailto:arbasher@alumni.ubc.ca)
 
 ## Upcoming features
-- Learning based on subsampling approaches.
+- Subsampling approaches to metabolic pathway learning and prediction.

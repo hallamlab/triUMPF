@@ -8,7 +8,6 @@ FUNCTIONAL_PATH = os.path.join(REPO_PATH, 'database', 'functional')
 COG_PATH = os.path.join(FUNCTIONAL_PATH, 'COG_2013-12-27')
 KEGG_PATH = os.path.join(FUNCTIONAL_PATH, 'kegg-pep-2011-06-18')
 METACYC_PATH = os.path.join(FUNCTIONAL_PATH, 'metacyc-v5-2011-10-21')
-SEED_PATH = os.path.join(FUNCTIONAL_PATH, 'CAZY_2014_09_04')
 CAZY_PATH = os.path.join(FUNCTIONAL_PATH, 'CAZY_2014_09_04')
 REFSEQ_PATH = os.path.join(FUNCTIONAL_PATH, 'refseq-nr-2014-01-18_NoWrap_1')
 

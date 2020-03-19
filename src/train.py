@@ -15,7 +15,7 @@ from scipy.sparse import lil_matrix, hstack
 from sklearn import preprocessing
 from sklearn.utils._joblib import Parallel, delayed
 from utility.access_file import load_data, save_data
-from utility.model_utils import score, synthesize_report, compute_abd_cov
+from utility.model_utils import synthesize_report, compute_abd_cov
 from utility.parse_input import parse_files
 
 
@@ -216,7 +216,6 @@ def __train(arg):
                         random_state=arg.random_state, log_path=arg.logpath)
         model.fit(M=labels_components, W=W, H=H, X=X, y=y, P=P, E=E, A=A, B=B, model_name=arg.model_name,
                   model_path=arg.mdpath, result_path=arg.rspath, display_params=display_params)
-
 
     ##########################################################################################################
     ######################                    PREDICT USING triUMPF                     ######################
