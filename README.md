@@ -18,7 +18,7 @@ Basically, *triUMPF* requires following packages:
 
 
 ## Experimental Objects and Test Samples
-Please download the following files from [Zenodo](https://zenodo.org/deposit/3711138). 
+Please download the following files from [Zenodo](https://zenodo.org/record/3711138#.Xn2fgXVKjeQ). 
 - The link contains the following preprocessed files:
     - "biocyc.pkl": an object containing the preprocessed MetaCyc database.
     - "pathway2ec.pkl": a matrix representing Pathway-EC association of size 3650 x 2526.
