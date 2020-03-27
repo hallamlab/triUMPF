@@ -68,7 +68,7 @@ Run the following commands to clone the repository to an approriate location:
 For all experiments, navigate to ``src`` folder then run the commands of your choice. For example, to display *triUMPF*'s running options use: `python main.py --help`. It should be self-contained. 
 
 ### Preprocessing
-To preprocess graphs, we provide few examples. For all examples: *--hin-file* corresponds to the desired generated file name, ending with *.pkl*.
+To preprocess data, we provide few examples. For all examples: *--hin-file* corresponds to the desired generated file name, ending with *.pkl*.
 
 #### Example 1
 To preprocess datasets with **no noise** to the pathway2ec association matrix ("pathway2ec.pkl"), execute the following command:
@@ -131,8 +131,7 @@ To **predict** outputs and **compile pathway report** from a dataset, generated 
 where *--pathway-report* enables to generate a detailed report for pathways for each instance.
 
 ## Citing
-If you find *triUMPF* useful in your research, please consider citing the following paper:
-- M. A. Basher, Abdur Rahman, McLaughlin, Ryan J., and Hallam, Steven J.. **["Metabolic pathway inference using non-negative matrix factorization with community detection."](https://github.com/arbasher/xXx.pdf)**, bioRxiv (2020).
+**COMING SOON**
 
 ## Contact
 For any inquiries, please contact: [arbasher@alumni.ubc.ca](mailto:arbasher@alumni.ubc.ca)
