@@ -29,7 +29,7 @@ np.seterr(divide='ignore', invalid='ignore')
 
 class triUMPF:
     def __init__(self, num_components=100, num_communities_p=100, num_communities_e=90, proxy_order_p=1,
-                 proxy_order_e=1, mu_omega=1, mu_gamma=1, fit_features=False, fit_comm=False,
+                 proxy_order_e=1, mu_omega=1, mu_gamma=1, fit_features=False, fit_comm=False, fit_pure_comm = False,
                  normalize_input_feature=True, binarize_input_feature=False, use_external_features=True,
                  cutting_point=3650, fit_intercept=True, alpha=1e9, beta=1e9, rho=0.01,
                  lambdas=[0.01, 0.01, 0.01, 0.01, 0.01, 0.01], eps=1e-4, early_stop=True, penalty='elasticnet',
@@ -50,6 +50,7 @@ class triUMPF:
         self.mu_gamma = mu_gamma
         self.fit_features = fit_features
         self.fit_comm = fit_comm
+        self.fit_pure_comm = fit_pure_comm
         self.normalize_input_feature = normalize_input_feature
         self.binarize_input_feature = binarize_input_feature
         if normalize_input_feature:
@@ -102,6 +103,7 @@ class triUMPF:
             {'cutting_point': 'The cutting point after which preprocessing is halted: {0}'.format(self.cutting_point)})
         argdict.update({'num_components': 'Number of components: {0}'.format(self.num_components)})
         argdict.update({'fit_comm': 'Fit community structural information? {0}'.format(self.fit_comm)})
+        argdict.update({'fit_pure_comm': 'Fit community excluding data? {0}'.format(self.fit_pure_comm)})
         argdict.update({'lambdas': 'Five hyper-parameters for constraints: {0}'.format(self.lambdas)})
         if self.fit_comm:
             argdict.update({'num_communities_p': 'Number of communities '
@@ -395,11 +397,13 @@ class triUMPF:
         print(desc, end="\r")
 
         numerator = A.T.dot(P).dot(self.T)
-        numerator += y[samples_idx].T.dot(self.L[samples_idx]).dot(self.T)
+        if not self.fit_pure_comm:
+            numerator += y[samples_idx].T.dot(self.L[samples_idx]).dot(self.T)
         numerator += 2 * self.alpha * self.C
         numerator[numerator < self.eps] = 0.
         denominator = self.T.T.dot(P.T).dot(P).dot(self.T)
-        denominator += self.T.T.dot(self.L[samples_idx].T).dot(self.L[samples_idx]).dot(self.T)
+        if not self.fit_pure_comm:
+            denominator += self.T.T.dot(self.L[samples_idx].T).dot(self.L[samples_idx]).dot(self.T)
         denominator += 2 * self.alpha * self.C.T.dot(self.C).toarray() + self.lam_5
         denominator = self.C.dot(lil_matrix(denominator))
         denominator[denominator == 0] = EPSILON
@@ -414,11 +418,13 @@ class triUMPF:
         print(desc, end="\r")
 
         numerator = B.T.dot(E).dot(self.R)
-        numerator += X[samples_idx].T.dot(self.L[samples_idx]).dot(self.R)
+        if not self.fit_pure_comm:
+            numerator += X[samples_idx].T.dot(self.L[samples_idx]).dot(self.R)
         numerator += 2 * self.beta * self.K
         numerator[numerator < self.eps] = 0.
         denominator = self.R.T.dot(E.T).dot(E).dot(self.R)
-        denominator += self.R.T.dot(self.L[samples_idx].T).dot(self.L[samples_idx]).dot(self.R.toarray())
+        if not self.fit_pure_comm:
+            denominator += self.R.T.dot(self.L[samples_idx].T).dot(self.L[samples_idx]).dot(self.R.toarray())
         denominator += (2 * self.beta * self.K.T.dot(self.K)).toarray() + self.lam_5
         denominator = self.K.dot(lil_matrix(denominator))
         denominator[denominator == 0] = EPSILON
@@ -433,13 +439,15 @@ class triUMPF:
         print(desc, end="\r")
 
         numerator = P.T.dot(A).dot(self.C)
-        numerator += self.L[samples_idx].T.dot(y[samples_idx]).dot(self.C)
+        if not self.fit_pure_comm:
+            numerator += self.L[samples_idx].T.dot(y[samples_idx]).dot(self.C)
         numerator[numerator < self.eps] = 0.
         denominator = P.T.dot(self.C).dot(self.C.T).dot(P).toarray() + self.lam_5
         denominator = lil_matrix(denominator).dot(self.T)
-        tmp = self.L[samples_idx].T.dot(self.L[samples_idx]).dot(self.T)
-        tmp = tmp.dot(self.C.T).dot(self.C)
-        denominator += tmp
+        if not self.fit_pure_comm:
+            tmp = self.L[samples_idx].T.dot(self.L[samples_idx]).dot(self.T)
+            tmp = tmp.dot(self.C.T).dot(self.C)
+            denominator += tmp
         denominator[denominator == 0] = EPSILON
         tmp = (numerator / denominator)
         self.T = self.T.multiply(tmp)
@@ -452,12 +460,14 @@ class triUMPF:
         print(desc, end="\r")
 
         numerator = E.T.dot(B).dot(self.K)
-        numerator += self.L[samples_idx].T.dot(X[samples_idx]).dot(self.K)
+        if not self.fit_pure_comm:
+            numerator += self.L[samples_idx].T.dot(X[samples_idx]).dot(self.K)
         numerator[numerator < self.eps] = 0.
         denominator = E.T.dot(self.K).dot(self.K.T).dot(E).toarray() + self.lam_5
         denominator = lil_matrix(denominator).dot(self.R)
-        tmp = self.L[samples_idx].T.dot(self.L[samples_idx]).dot(self.R).dot(self.K.T).dot(self.K)
-        denominator += tmp
+        if not self.fit_pure_comm:
+            tmp = self.L[samples_idx].T.dot(self.L[samples_idx]).dot(self.R).dot(self.K.T).dot(self.K)
+            denominator += tmp
         denominator[denominator == 0] = EPSILON
         tmp = (numerator / denominator)
         self.R = np.multiply(self.R.toarray(), tmp)
@@ -589,9 +599,10 @@ class triUMPF:
                                                       learning_rate, batch_idx, total_progress)
                  for batch_idx, batch in enumerate(list_batches))
         # optimize L
-        parallel(delayed(self.__optimize_l)(X[:, :self.cutting_point], y, samples_idx[batch:batch + self.batch],
-                                            learning_rate, batch_idx, len(list_batches))
-                 for batch_idx, batch in enumerate(list_batches))
+        if not self.fit_pure_comm:
+            parallel(delayed(self.__optimize_l)(X[:, :self.cutting_point], y, samples_idx[batch:batch + self.batch],
+                                                learning_rate, batch_idx, len(list_batches))
+                    for batch_idx, batch in enumerate(list_batches))
         # optimize Z
         self.__optimize_z(W=W, H=H, learning_rate=learning_rate)
 
@@ -680,8 +691,9 @@ class triUMPF:
             self.K = lil_matrix(self.K)
             self.T = lil_matrix(self.T.T)
             self.R = lil_matrix(self.R.T)
-            self.L = np.random.gamma(shape=self.T.shape[0], scale=1 / self.T.shape[0],
-                                     size=(X.shape[0], self.T.shape[0]))
+            if not self.fit_pure_comm:
+                self.L = np.random.gamma(shape=self.T.shape[0], scale=1 / self.T.shape[0],
+                                         size=(X.shape[0], self.T.shape[0]))
             tmp = X[:, :self.cutting_point].shape[1]
             if H is not None:
                 self.Z = np.random.gamma(shape=H.shape[1], scale=1 / H.shape[1], size=(tmp, H.shape[0]))
@@ -689,7 +701,8 @@ class triUMPF:
                 self.Z = np.random.gamma(shape=self.H.shape[1], scale=1 / self.H.shape[1],
                                          size=(tmp, self.H.shape[0]))
             self.Z = lil_matrix(self.Z)
-            self.L = lil_matrix(self.L)
+            if not self.fit_pure_comm:
+                self.L = lil_matrix(self.L)
             self.coef_label = lil_matrix(np.zeros(shape=(self.num_labels, X.shape[1])))
             self.intercept_label = lil_matrix(np.zeros(shape=(self.num_labels, 1)))
 
@@ -832,7 +845,8 @@ class triUMPF:
                 sample_idx = self.__shffule(num_samples=X.shape[0])
                 X = X[sample_idx, :]
                 y = y[sample_idx, :]
-                self.L = self.L[sample_idx, :]
+                if not self.fit_pure_comm:
+                    self.L = self.L[sample_idx, :]
 
                 if self.learning_type == "optimal":
                     # usual optimization technique
@@ -883,8 +897,9 @@ class triUMPF:
                             save_data(data=self.T, file_name=T_name, save_path=model_path, mode="wb", print_tag=False)
                             logger.info('\t\t  >> Storing R to: {0}'.format(R_name))
                             save_data(data=self.R, file_name=R_name, save_path=model_path, mode="wb", print_tag=False)
-                            logger.info('\t\t  >> Storing L to: {0}'.format(L_name))
-                            save_data(data=self.L, file_name=L_name, save_path=model_path, mode="wb", print_tag=False)
+                            if not self.fit_pure_comm:
+                                logger.info('\t\t  >> Storing L to: {0}'.format(L_name))
+                                save_data(data=self.L, file_name=L_name, save_path=model_path, mode="wb", print_tag=False)
                             logger.info('\t\t  >> Storing Z to: {0}'.format(Z_name))
                             save_data(data=self.Z, file_name=Z_name, save_path=model_path, mode="wb", print_tag=False)
                         if epoch == n_epochs - 1:
@@ -902,8 +917,9 @@ class triUMPF:
                             save_data(data=self.T, file_name=T_name, save_path=model_path, mode="wb", print_tag=False)
                             logger.info('\t\t  >> Storing R to: {0}'.format(R_name))
                             save_data(data=self.R, file_name=R_name, save_path=model_path, mode="wb", print_tag=False)
-                            logger.info('\t\t  >> Storing L to: {0}'.format(L_name))
-                            save_data(data=self.L, file_name=L_name, save_path=model_path, mode="wb", print_tag=False)
+                            if not self.fit_pure_comm:
+                                logger.info('\t\t  >> Storing L to: {0}'.format(L_name))
+                                save_data(data=self.L, file_name=L_name, save_path=model_path, mode="wb", print_tag=False)
                             logger.info('\t\t  >> Storing Z to: {0}'.format(Z_name))
                             save_data(data=self.Z, file_name=Z_name, save_path=model_path, mode="wb", print_tag=False)
                         del self.C, self.K, self.T, self.R, self.L, self.Z
@@ -928,8 +944,9 @@ class triUMPF:
                                                print_tag=False)
                             self.R = load_data(file_name=R_name, load_path=model_path, tag="triUMPF\'s R parameters",
                                                print_tag=False)
-                            self.L = load_data(file_name=L_name, load_path=model_path, tag="triUMPF\'s L parameters",
-                                               print_tag=False)
+                            if not self.fit_pure_comm:
+                                self.L = load_data(file_name=L_name, load_path=model_path, tag="triUMPF\'s L parameters",
+                                                print_tag=False)
                             self.Z = load_data(file_name=Z_name, load_path=model_path, tag="triUMPF\'s Z parameters",
                                                print_tag=False)
 

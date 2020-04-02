@@ -117,6 +117,7 @@ def __internal_args(parse_args):
     arg.mu_omega = parse_args.mu_omega
     arg.mu_gamma = parse_args.mu_gamma
     arg.fit_comm = parse_args.fit_comm
+    arg.fit_pure_comm = parse_args.fit_pure_comm
     arg.alpha = parse_args.alpha
     arg.beta = parse_args.beta
     arg.rho = parse_args.rho
@@ -261,6 +262,8 @@ def parse_command_line():
                         help='Whether to fit by external features. (default value: False).')
     parser.add_argument('--fit-comm', action='store_true', default=False,
                         help='Whether to fit community. (default value: False).')
+    parser.add_argument('--fit-pure-comm', action='store_true', default=False,
+                        help='Whether to fit community excluding data. (default value: False).')
     parser.add_argument('--binarize', action='store_true', default=False,
                         help='Whether to binarize data (set feature values to 0 or 1). (default value: False).')
     parser.add_argument('--normalize', action='store_true', default=False,

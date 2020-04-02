@@ -201,7 +201,7 @@ def __train(arg):
         model = triUMPF(num_components=arg.num_components, num_communities_p=arg.num_communities_p,
                         num_communities_e=arg.num_communities_e, proxy_order_p=arg.proxy_order_p,
                         proxy_order_e=arg.proxy_order_e, mu_omega=arg.mu_omega, mu_gamma=arg.mu_gamma,
-                        fit_features=arg.fit_features, fit_comm=arg.fit_comm,
+                        fit_features=arg.fit_features, fit_comm=arg.fit_comm, fit_pure_comm=arg.fit_pure_comm,
                         normalize_input_feature=arg.normalize_input_feature,
                         binarize_input_feature=arg.binarize_input_feature,
                         use_external_features=arg.use_external_features, cutting_point=arg.cutting_point,
