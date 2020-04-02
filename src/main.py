@@ -307,8 +307,8 @@ def parse_command_line():
                         help='Top k features. (default value: 10).')
     parser.add_argument('--ssample-input-size', default=0.05, type=float,
                         help='The size of input subsample. (default value: 0.05)')
-    parser.add_argument('--ssample-label-size', default=50, type=int,
-                        help='Maximum number of labels to be sampled. (default value: 50).')
+    parser.add_argument('--ssample-label-size', default=1000, type=int,
+                        help='Maximum number of labels to be sampled. (default value: 1000).')
     parser.add_argument('--learning-type', default='optimal', type=str, choices=['optimal', 'sgd'],
                         help='The learning rate schedule. (default value: "optimal")')
     parser.add_argument('--lr', default=0.0001, type=float, help='The learning rate. (default value: 0.0001).')
