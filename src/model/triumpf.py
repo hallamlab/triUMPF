@@ -312,9 +312,10 @@ class triUMPF:
             TC_t = np.dot(self.T.toarray(), self.C.toarray().T)
             loss += self.__reconstruction_error(M=A.toarray(), X1=P.toarray(), X2=TC_t)
             loss += self.__reconstruction_error(M=B.toarray(), X1=E.toarray(), X2=RK_t)
-            loss += self.__reconstruction_error(M=X[:, :self.cutting_point].toarray(),
-                                                X1=self.L.toarray(), X2=RK_t)
-            loss += self.__reconstruction_error(M=y.toarray(), X1=self.L.toarray(), X2=TC_t)
+            if not self.fit_pure_comm:
+                loss += self.__reconstruction_error(M=X[:, :self.cutting_point].toarray(),
+                                                    X1=self.L.toarray(), X2=RK_t)
+                loss += self.__reconstruction_error(M=y.toarray(), X1=self.L.toarray(), X2=TC_t)
             if self.fit_intercept:
                 X = hstack((lil_matrix(np.ones((X.shape[0], 1))), X))
             X = X.toarray()
