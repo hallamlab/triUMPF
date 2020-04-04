@@ -321,7 +321,7 @@ class triUMPF:
             X = X.toarray()
             y = y.toarray()
             labels = np.arange(self.num_labels)
-            if labels > self.subsample_labels_size:
+            if len(labels) > self.subsample_labels_size:
                 labels = np.random.choice(np.arange(self.num_labels), self.subsample_labels_size, replace=False)
             parallel = Parallel(n_jobs=self.num_jobs, verbose=max(0, self.verbose - 1))
             results = parallel(delayed(self.__cost_logistic)(X, y, label_idx)
