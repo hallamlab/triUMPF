@@ -923,7 +923,9 @@ class triUMPF:
                                 save_data(data=self.L, file_name=L_name, save_path=model_path, mode="wb", print_tag=False)
                             logger.info('\t\t  >> Storing Z to: {0}'.format(Z_name))
                             save_data(data=self.Z, file_name=Z_name, save_path=model_path, mode="wb", print_tag=False)
-                        del self.C, self.K, self.T, self.R, self.L, self.Z
+                        del self.C, self.K, self.T, self.R, self.Z
+                        if not self.fit_pure_comm:
+                            del self.L
                         if old_cost >= new_cost:
                             desc = '\t\t  >> Storing the triUMPF model to: {0:s}.pkl'.format(model_name)
                             print(desc)
