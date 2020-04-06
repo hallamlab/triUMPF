@@ -747,7 +747,7 @@ class triUMPF:
                 self.is_fit = True
 
                 # Save models parameters based on test frequencies
-                if (epoch % self.display_interval) == 0 or epoch == 1 or epoch == n_epochs - 1:
+                if (epoch % self.display_interval) == 0 or epoch == n_epochs - 1:
                     new_cost = self.__cost(M=M, X=X, y=y, P=P, E=E, A=A, B=B) / self.num_epochs
                     data = str(epoch) + '\t' + str(round(end_epoch - start_epoch, 3)) + '\t' + str(
                         new_cost) + '\t' + str(old_cost) + '\n'
@@ -873,7 +873,7 @@ class triUMPF:
                 self.is_fit = True
 
                 # Save models parameters based on test frequencies
-                if (epoch % self.display_interval) == 0 or epoch == 1 or epoch == n_epochs - 1:
+                if (epoch % self.display_interval) == 0 or epoch == n_epochs - 1:
                     new_cost = self.__cost(M=None, X=X, y=y, P=P, E=E, A=A, B=B) / self.num_epochs
                     data = str(epoch) + '\t' + str(round(end_epoch - start_epoch, 3)) + '\t' + str(
                         new_cost) + '\t' + str(old_cost) + '\n'
@@ -933,7 +933,7 @@ class triUMPF:
                             save_data(data=copy.copy(self), file_name=model_name + '.pkl', save_path=model_path,
                                       mode="wb", print_tag=False)
                         if epoch == n_epochs - 1:
-                            desc = '\t\t  >> Storing the triUMPF model to: {0:s}.pkl'.format(model_name + '_final.pkl')
+                            desc = '\t\t  >> Storing the triUMPF model to: {0:s}'.format(model_name + '_final.pkl')
                             print(desc)
                             logger.info(desc)
                             save_data(data=copy.copy(self), file_name=model_name + '_final.pkl', save_path=model_path,
