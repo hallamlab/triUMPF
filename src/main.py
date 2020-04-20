@@ -73,6 +73,8 @@ def __internal_args(parse_args):
     arg.pathway2ec_idx_name = parse_args.pathway2ec_idx_name
     arg.features_name = parse_args.features_name
     arg.hin_name = parse_args.hin_name
+    arg.pathway_gexf_name = parse_args.pathway_gexf_name
+    arg.ec_gexf_name = parse_args.ec_gexf_name
     arg.M_name = parse_args.M_name
     arg.W_name = parse_args.W_name
     arg.H_name = parse_args.H_name
@@ -196,6 +198,10 @@ def parse_command_line():
                         help='The features file name. (default value: "path2vec_cmt_tf_embeddings.npz")')
     parser.add_argument('--hin-name', type=str, default='hin_cmt.pkl',
                         help='The hin file name. (default value: "hin_cmt.pkl")')
+    parser.add_argument('--pathway-gexf-name', type=str, default='pathway_graph.gexf',
+                        help='The pathway graph file name. (default value: "pathway_graph.gexf")')
+    parser.add_argument('--ec-gexf-name', type=str, default='ec_graph.gexf',
+                        help='The ec graph file name. (default value: "ec_graph.gexf")')
     parser.add_argument('--M-name', type=str, default='M.pkl',
                         help='The pathway2ec association matrix file name. (default value: "M.pkl")')
     parser.add_argument('--W-name', type=str, default='W.pkl',

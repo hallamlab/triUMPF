@@ -68,7 +68,7 @@ Run the following commands to clone the repository to an approriate location:
 For all experiments, navigate to ``src`` folder then run the commands of your choice. For example, to display *triUMPF*'s running options use: `python main.py --help`. It should be self-contained. 
 
 ### Preprocessing
-To preprocess data, we provide few examples. For all examples: *--hin-file* corresponds to the desired generated file name, ending with *.pkl*.
+To preprocess data, we provide few examples.
 
 #### Example 1
 To preprocess datasets with **no noise** to the pathway2ec association matrix ("pathway2ec.pkl"), execute the following command:
