@@ -83,38 +83,39 @@ def __train(arg):
         steps = steps + 1
 
         print('\t>> Loading files...')
+        X = load_data(file_name=arg.X_name, load_path=arg.dspath, tag="instances")
+        X = X[:, :arg.cutting_point]
+        
         # load a biocyc file
         data_object = load_data(file_name=arg.object_name, load_path=arg.ospath, tag='the biocyc object')
-        # extract pathway ids
-        pathway_dict = data_object["pathway_id"]
         ec_dict = data_object["ec_id"]
+        pathway_dict = data_object["pathway_id"]
         del data_object
-
+        
         # load a hin file
         hin = load_data(file_name=arg.hin_name, load_path=arg.ospath,
                         tag='heterogeneous information network')
         # get path2vec mapping
-        node2idx_path2vec = dict((node[0], node[1]['mapped_idx'])
-                                 for node in hin.nodes(data=True))
+        node2idx_path2vec = dict((node[0], node[1]['mapped_idx']) for node in hin.nodes(data=True))
         # get pathway2ec mapping
         node2idx_pathway2ec = [node[0] for node in hin.nodes(data=True)]
         Adj = nx.adj_matrix(G=hin)
         del hin
-
+       
         # load pathway2ec mapping matrix
+        print('\t>> Loading label to component mapping file object...')
         pathway2ec_idx = load_data(file_name=arg.pathway2ec_idx_name, load_path=arg.ospath)
         path2vec_features = np.load(file=os.path.join(arg.mdpath, arg.features_name))
 
         # extracting pathway and ec features
         labels_components = load_data(file_name=arg.pathway2ec_name, load_path=arg.ospath, tag='M')
-        path2vec_features = path2vec_features[path2vec_features.files[0]]
         pathways_idx = np.array([node2idx_path2vec[v] for v, idx in pathway_dict.items()
                                  if v in node2idx_path2vec])
-        P = path2vec_features[pathways_idx, :]
+        P = path2vec_features[path2vec_features.files[0]][pathways_idx, :]
         tmp = [idx for v, idx in ec_dict.items() if v in node2idx_pathway2ec]
         ec_idx = np.array([idx for idx in tmp if len(np.where(pathway2ec_idx == idx)[0]) > 0])
-        E = path2vec_features[ec_idx, :]
-
+        E = path2vec_features[path2vec_features.files[0]][ec_idx, :]
+        
         # constraint features space between 0 to 1 to avoid negative results
         min_rho = np.min(P)
         max_rho = np.max(P)
@@ -136,6 +137,18 @@ def __train(arg):
         B = B / B.sum(1)
         B = np.nan_to_num(B)
 
+        # building features
+        pathway_dict = dict((idx, id) for id, idx in pathway_dict.items())
+        ec_dict = dict((idx, id) for id, idx in ec_dict.items())
+        print('\t>> Loading label to component mapping file object...')
+        pathway2ec_idx = list(pathway2ec_idx)
+        tmp = list(ec_dict.keys())
+        ec_dict = dict((idx, ec_dict[tmp.index(ec)]) for idx, ec in enumerate(pathway2ec_idx))
+        __build_features(X=X, pathwat_dict=pathway_dict, ec_dict=ec_dict, labels_components=labels_components,
+                         node2idx_pathway2ec=node2idx_pathway2ec,
+                         path2vec_features=path2vec_features, file_name=arg.file_name, dspath=arg.dspath,
+                         batch_size=arg.batch, num_jobs=arg.num_jobs)
+        
         ## train size
         if arg.ssample_input_size < 1:
             # add white noise to M
