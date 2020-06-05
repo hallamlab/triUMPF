@@ -61,11 +61,11 @@ Please download the following files from [Zenodo](https://zenodo.org/record/3711
     - "triUMPF_e\*.pkl": Descriptions about the remaining matrices are same as triUMPF_X\*.
 
 ## Installation and Basic Usage
-Run the following commands to clone the repository to an approriate location:
+Run the following commands to clone the repository to an appropriate location:
 
 ``git clone https://github.com/hallamlab/triUMPF.git``
 
-For all experiments, navigate to ``src`` folder then run the commands of your choice. For example, to display *triUMPF*'s running options use: `python main.py --help`. It should be self-contained. 
+For all experiments, navigate to ``src`` folder then run the commands of your choice. For example, to display *triUMPF*'s running options use: `python main.py --help`. It should be self-contained.
 
 ### Preprocessing
 To preprocess data, we provide few examples.
@@ -85,7 +85,7 @@ To preprocess datasets with **20% noise** to the pathway2ec association (*pathwa
 
 ``python main.py --preprocess-dataset --white-links --ssample-input-size 0.2 --object-name "biocyc.pkl" --pathway2ec-name "pathway2ec.pkl" --pathway2ec-pidx-name "pathway2ec_idx.pkl" --features-name "path2vec_cmt_tf_embeddings.npz" --hin-name "hin_cmt.pkl" --mdpath [Location of the features] --ospath [Location to all objects except features]``
 
-### Train
+### Training
 For trainning, we provide few examples. 
 
 Description about arguments in all examples: *--cutting-point* is the cutting point after which binarize operation is halted in the input data, *--M-name* is the pathway2ec association matrix file name, *--W-name* is the W parameter, *--H-name* is the H parameter, and *--model-name* corresponds the name of the model excluding any *EXTENSION*. The model name will have *.pkl* extension. The arguments *--P-name* corresponds the pathway features file name, *--E-name* is the EC features file name, *--A-name* is the pathway to pathway association file name, *--B-name* corresponds the EC to EC association file name, *--X-name* is the input space of multi-label data, and *--y-name* is the pathway space of multi-label data. For the dataset, any multi-label dataset can be employed.
@@ -112,7 +112,7 @@ If you wish to use the previously **decomposed** *M* of 100 components to train 
 
 ``python main.py --train --no-decomposition --fit-features --fit-comm --binarize --use-external-features --cutting-point 3650 --num-components 100 --lambdas 0.01 0.01 0.01 0.01 0.001 10 --W-name "[Generated .pkl W file]" --H-name "[Generated .pkl H file]"  --P-name "P.pkl" --E-name "E.pkl"  --A-name "A.pkl" --B-name "B.pkl" --X-name "biocyc_Xe.pkl" --y-name "biocyc_y.pkl" --model-name "[Model name without extension]" --mdpath "[Location of the model]" --dspath "[Location of the dataset]" --logpath "[Location to the log directory]" --batch 50 --max-inner-iter 5 --num-epochs 100 --num-jobs 2``
 
-### Predict
+### Predicting
 For inference, we provide few examples. 
 
 Description about arguments in all of given examples: *--cutting-point* is the cutting point after which binarize operation is halted in the input data, *--decision-threshold* corresponds the cutoff threshold for prediction, and *--model-name* corresponds the name of the model, excluding any *EXTENSION*. The model name will have *.pkl* extension.

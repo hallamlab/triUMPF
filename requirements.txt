@@ -1,10 +1,5 @@
-copy
-logging
 numpy
 scipy
 sklearn
 networkx
-json
-textwrap
 pandas
-shutil

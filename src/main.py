@@ -211,7 +211,7 @@ def parse_command_line():
     parser.add_argument('--X-name', type=str, default='golden_Xe.pkl',
                         help='The X file name. (default value: "biocyc_Xe.pkl")')
     parser.add_argument('--y-name', type=str, default='golden_y.pkl',
-                        help='The X file name. (default value: "biocyc_y.pkl")')
+                        help='The y file name. (default value: "biocyc_y.pkl")')
     parser.add_argument('--P-name', type=str, default='P.pkl',
                         help='The pathway features file name. (default value: "P.pkl")')
     parser.add_argument('--E-name', type=str, default='E.pkl',
