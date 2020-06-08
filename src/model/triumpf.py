@@ -29,7 +29,7 @@ np.seterr(divide='ignore', invalid='ignore')
 
 class triUMPF:
     def __init__(self, num_components=100, num_communities_p=100, num_communities_e=90, proxy_order_p=1,
-                 proxy_order_e=1, mu_omega=1, mu_gamma=1, fit_features=False, fit_comm=False, fit_pure_comm = False,
+                 proxy_order_e=1, mu_omega=1, mu_gamma=1, fit_features=False, fit_comm=False, fit_pure_comm=False,
                  normalize_input_feature=True, binarize_input_feature=False, use_external_features=True,
                  cutting_point=3650, fit_intercept=True, alpha=1e9, beta=1e9, rho=0.01,
                  lambdas=[0.01, 0.01, 0.01, 0.01, 0.01, 0.01], eps=1e-4, early_stop=True, penalty='elasticnet',
@@ -603,7 +603,7 @@ class triUMPF:
         if not self.fit_pure_comm:
             parallel(delayed(self.__optimize_l)(X[:, :self.cutting_point], y, samples_idx[batch:batch + self.batch],
                                                 learning_rate, batch_idx, len(list_batches))
-                    for batch_idx, batch in enumerate(list_batches))
+                     for batch_idx, batch in enumerate(list_batches))
         # optimize Z
         self.__optimize_z(W=W, H=H, learning_rate=learning_rate)
 
@@ -900,7 +900,8 @@ class triUMPF:
                             save_data(data=self.R, file_name=R_name, save_path=model_path, mode="wb", print_tag=False)
                             if not self.fit_pure_comm:
                                 logger.info('\t\t       >> Storing L to: {0}'.format(L_name))
-                                save_data(data=self.L, file_name=L_name, save_path=model_path, mode="wb", print_tag=False)
+                                save_data(data=self.L, file_name=L_name, save_path=model_path, mode="wb",
+                                          print_tag=False)
                             logger.info('\t\t       >> Storing Z to: {0}'.format(Z_name))
                             save_data(data=self.Z, file_name=Z_name, save_path=model_path, mode="wb", print_tag=False)
                         if epoch == n_epochs - 1:
@@ -920,7 +921,8 @@ class triUMPF:
                             save_data(data=self.R, file_name=R_name, save_path=model_path, mode="wb", print_tag=False)
                             if not self.fit_pure_comm:
                                 logger.info('\t\t       >> Storing L to: {0}'.format(L_name))
-                                save_data(data=self.L, file_name=L_name, save_path=model_path, mode="wb", print_tag=False)
+                                save_data(data=self.L, file_name=L_name, save_path=model_path, mode="wb",
+                                          print_tag=False)
                             logger.info('\t\t       >> Storing Z to: {0}'.format(Z_name))
                             save_data(data=self.Z, file_name=Z_name, save_path=model_path, mode="wb", print_tag=False)
                         del self.C, self.K, self.T, self.R, self.Z
@@ -948,8 +950,9 @@ class triUMPF:
                             self.R = load_data(file_name=R_name, load_path=model_path, tag="triUMPF\'s R parameters",
                                                print_tag=False)
                             if not self.fit_pure_comm:
-                                self.L = load_data(file_name=L_name, load_path=model_path, tag="triUMPF\'s L parameters",
-                                                print_tag=False)
+                                self.L = load_data(file_name=L_name, load_path=model_path,
+                                                   tag="triUMPF\'s L parameters",
+                                                   print_tag=False)
                             self.Z = load_data(file_name=Z_name, load_path=model_path, tag="triUMPF\'s Z parameters",
                                                print_tag=False)
 

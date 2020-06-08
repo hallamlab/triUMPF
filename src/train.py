@@ -85,13 +85,13 @@ def __train(arg):
         print('\t>> Loading files...')
         X = load_data(file_name=arg.X_name, load_path=arg.dspath, tag="instances")
         X = X[:, :arg.cutting_point]
-        
+
         # load a biocyc file
         data_object = load_data(file_name=arg.object_name, load_path=arg.ospath, tag='the biocyc object')
         ec_dict = data_object["ec_id"]
         pathway_dict = data_object["pathway_id"]
         del data_object
-        
+
         # load a hin file
         hin = load_data(file_name=arg.hin_name, load_path=arg.ospath,
                         tag='heterogeneous information network')
@@ -101,7 +101,7 @@ def __train(arg):
         node2idx_pathway2ec = [node[0] for node in hin.nodes(data=True)]
         Adj = nx.adj_matrix(G=hin)
         del hin
-       
+
         # load pathway2ec mapping matrix
         print('\t>> Loading label to component mapping file object...')
         pathway2ec_idx = load_data(file_name=arg.pathway2ec_idx_name, load_path=arg.ospath)
@@ -115,7 +115,7 @@ def __train(arg):
         tmp = [idx for v, idx in ec_dict.items() if v in node2idx_pathway2ec]
         ec_idx = np.array([idx for idx in tmp if len(np.where(pathway2ec_idx == idx)[0]) > 0])
         E = path2vec_features[path2vec_features.files[0]][ec_idx, :]
-        
+
         # constraint features space between 0 to 1 to avoid negative results
         min_rho = np.min(P)
         max_rho = np.max(P)
@@ -148,7 +148,7 @@ def __train(arg):
                          node2idx_pathway2ec=node2idx_pathway2ec,
                          path2vec_features=path2vec_features, file_name=arg.file_name, dspath=arg.dspath,
                          batch_size=arg.batch, num_jobs=arg.num_jobs)
-        
+
         ## train size
         if arg.ssample_input_size < 1:
             # add white noise to M
