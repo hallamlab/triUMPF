@@ -1,5 +1,12 @@
 numpy
+pandas
+scikit-learn
 scipy
 sklearn
 networkx
-pandas
+community
+plotly
+squarify
+matplotlib
+altair
+skmultilearn

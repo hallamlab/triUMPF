@@ -890,18 +890,18 @@ class triUMPF:
                         Z_name = model_name + "_Z.pkl"
 
                         if old_cost >= new_cost:
-                            logger.info('\t\t  >> Storing C to: {0}'.format(C_name))
+                            logger.info('\t\t       >> Storing C to: {0}'.format(C_name))
                             save_data(data=self.C, file_name=C_name, save_path=model_path, mode="wb", print_tag=False)
-                            logger.info('\t\t  >> Storing K to: {0}'.format(K_name))
+                            logger.info('\t\t       >> Storing K to: {0}'.format(K_name))
                             save_data(data=self.K, file_name=K_name, save_path=model_path, mode="wb", print_tag=False)
-                            logger.info('\t\t  >> Storing T to: {0}'.format(T_name))
+                            logger.info('\t\t       >> Storing T to: {0}'.format(T_name))
                             save_data(data=self.T, file_name=T_name, save_path=model_path, mode="wb", print_tag=False)
-                            logger.info('\t\t  >> Storing R to: {0}'.format(R_name))
+                            logger.info('\t\t       >> Storing R to: {0}'.format(R_name))
                             save_data(data=self.R, file_name=R_name, save_path=model_path, mode="wb", print_tag=False)
                             if not self.fit_pure_comm:
-                                logger.info('\t\t  >> Storing L to: {0}'.format(L_name))
+                                logger.info('\t\t       >> Storing L to: {0}'.format(L_name))
                                 save_data(data=self.L, file_name=L_name, save_path=model_path, mode="wb", print_tag=False)
-                            logger.info('\t\t  >> Storing Z to: {0}'.format(Z_name))
+                            logger.info('\t\t       >> Storing Z to: {0}'.format(Z_name))
                             save_data(data=self.Z, file_name=Z_name, save_path=model_path, mode="wb", print_tag=False)
                         if epoch == n_epochs - 1:
                             C_name = model_name + "_C_final.pkl"
@@ -910,30 +910,30 @@ class triUMPF:
                             R_name = model_name + "_R_final.pkl"
                             L_name = model_name + "_L_final.pkl"
                             Z_name = model_name + "_Z_final.pkl"
-                            logger.info('\t\t  >> Storing C to: {0}'.format(C_name))
+                            logger.info('\t\t       >> Storing C to: {0}'.format(C_name))
                             save_data(data=self.C, file_name=C_name, save_path=model_path, mode="wb", print_tag=False)
-                            logger.info('\t\t  >> Storing K to: {0}'.format(K_name))
+                            logger.info('\t\t       >> Storing K to: {0}'.format(K_name))
                             save_data(data=self.K, file_name=K_name, save_path=model_path, mode="wb", print_tag=False)
-                            logger.info('\t\t  >> Storing T to: {0}'.format(T_name))
+                            logger.info('\t\t       >> Storing T to: {0}'.format(T_name))
                             save_data(data=self.T, file_name=T_name, save_path=model_path, mode="wb", print_tag=False)
-                            logger.info('\t\t  >> Storing R to: {0}'.format(R_name))
+                            logger.info('\t\t       >> Storing R to: {0}'.format(R_name))
                             save_data(data=self.R, file_name=R_name, save_path=model_path, mode="wb", print_tag=False)
                             if not self.fit_pure_comm:
-                                logger.info('\t\t  >> Storing L to: {0}'.format(L_name))
+                                logger.info('\t\t       >> Storing L to: {0}'.format(L_name))
                                 save_data(data=self.L, file_name=L_name, save_path=model_path, mode="wb", print_tag=False)
-                            logger.info('\t\t  >> Storing Z to: {0}'.format(Z_name))
+                            logger.info('\t\t       >> Storing Z to: {0}'.format(Z_name))
                             save_data(data=self.Z, file_name=Z_name, save_path=model_path, mode="wb", print_tag=False)
                         del self.C, self.K, self.T, self.R, self.Z
                         if not self.fit_pure_comm:
                             del self.L
                         if old_cost >= new_cost:
-                            desc = '\t\t  >> Storing the triUMPF model to: {0:s}.pkl'.format(model_name)
+                            desc = '\t\t       >> Storing the triUMPF model to: {0:s}.pkl'.format(model_name)
                             print(desc)
                             logger.info(desc)
                             save_data(data=copy.copy(self), file_name=model_name + '.pkl', save_path=model_path,
                                       mode="wb", print_tag=False)
                         if epoch == n_epochs - 1:
-                            desc = '\t\t  >> Storing the triUMPF model to: {0:s}'.format(model_name + '_final.pkl')
+                            desc = '\t\t       >> Storing the triUMPF model to: {0:s}'.format(model_name + '_final.pkl')
                             print(desc)
                             logger.info(desc)
                             save_data(data=copy.copy(self), file_name=model_name + '_final.pkl', save_path=model_path,
@@ -955,7 +955,7 @@ class triUMPF:
 
                         if self.early_stop:
                             relative_change = np.abs((new_cost - old_cost) / old_cost)
-                            desc = '\t\t    --> There is a little improvement in the cost '
+                            desc = '\t\t       >> There is a little improvement in the cost '
                             desc += '(< {0}) for epoch {1}, hence, training is terminated...'.format(
                                 self.loss_threshold, epoch)
                             if relative_change < self.loss_threshold:
