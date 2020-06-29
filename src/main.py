@@ -220,7 +220,7 @@ def parse_command_line():
                         help='The pathway to pathway association file name. (default value: "A.pkl")')
     parser.add_argument('--B-name', type=str, default='B.pkl',
                         help='The EC to EC association file name. (default value: "B.pkl")')
-    parser.add_argument('--samples-ids', type=str, default='SAG_ids.pkl',
+    parser.add_argument('--samples-ids', type=str, default=None,
                         help='The samples ids file name. (default value: "SAG_ids.pkl")')
     parser.add_argument('--file-name', type=str, default='triUMPF_symbionts',
                         help='The file name to save various scores and communities files. (default value: "triUMPF_O_final")')

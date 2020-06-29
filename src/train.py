@@ -284,8 +284,9 @@ def __train(arg):
         print('\t>> Loading necessary files......')
         X = load_data(file_name=arg.X_name, load_path=arg.dspath, tag="X")
         sample_ids = np.arange(X.shape[0])
-        if arg.samples_ids in os.listdir(arg.dspath):
-            sample_ids = load_data(file_name=arg.samples_ids, load_path=arg.dspath, tag="samples ids")
+        if arg.samples_ids is not None:
+            if arg.samples_ids in os.listdir(arg.dspath):
+                sample_ids = load_data(file_name=arg.samples_ids, load_path=arg.dspath, tag="samples ids")
 
         # load model
         model = load_data(file_name=arg.model_name + '.pkl', load_path=arg.mdpath, tag='triUMPF model')
