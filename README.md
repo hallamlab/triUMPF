@@ -136,6 +136,3 @@ If you find *triUMPF* useful in your research, please consider citing the follow
 
 ## Contact
 For any inquiries, please contact: [arbasher@alumni.ubc.ca](mailto:arbasher@alumni.ubc.ca)
-
-## Upcoming features
-- Subsampling approaches to metabolic pathway learning and prediction.
