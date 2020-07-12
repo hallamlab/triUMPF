@@ -95,38 +95,39 @@ Description about arguments in all examples: *--cutting-point* is the cutting po
 #### Example 1
 To **decompose** *M* of 100 components, execute the following command:
 
-``python main.py --train --num-components 100 --lambdas 0.01 0.01 0.01 0.01 0.001 10 --M-name "M.pkl" --model-name "[Model name without extension]" --mdpath "[Location of the model]" --logpath "[Location to the log directory]" --batch 50 --max-inner-iter 5 --num-epochs 100 --num-jobs 2``
+``python main.py --train --num-components 100 --lambdas 0.01 0.01 0.01 0.01 0.001 10 --M-name "M.pkl" --model-name "[model name (without extension)]" --mdpath "[path to the model]" --logpath "[path to the log directory]" --batch 50 --max-inner-iter 5 --num-epochs 100 --num-jobs 2``
 
 #### Example 2
 To **decompose** *M* of 100 components by using **features**, execute the following command:
 
-``python main.py --train --fit-features --num-components 100 --lambdas 0.01 0.01 0.01 0.01 0.001 10 --M-name "M.pkl" --P-name "P.pkl" --E-name "E.pkl" --model-name "[Model name without extension]" --mdpath "[Location of the model]" --logpath "[Location to the log directory]" --batch 50 --max-inner-iter 5 --num-epochs 100 --num-jobs 2``
+``python main.py --train --fit-features --num-components 100 --lambdas 0.01 0.01 0.01 0.01 0.001 10 --M-name "M.pkl" --P-name "P.pkl" --E-name "E.pkl" --model-name "[model name (without extension)]" --mdpath "[path to the model]" --logpath "[path to the log directory]" --batch 50 --max-inner-iter 5 --num-epochs 100 --num-jobs 2``
 
 #### Example 3
 If you wish to train multi-label dataset by **decomposing** *M* of 100 components while using **features** and **community**, execute the following command:
 
-``python main.py --train --fit-features --fit-comm --binarize --use-external-features --cutting-point 3650 --num-components 100 --lambdas 0.01 0.01 0.01 0.01 0.001 10 --M-name "M.pkl" --P-name "P.pkl" --E-name "E.pkl"  --A-name "A.pkl" --B-name "B.pkl" --X-name "biocyc_Xe.pkl" --y-name "biocyc_y.pkl" --model-name "[Model name without extension]" --mdpath "[Location of the model]" --dspath "[Location of the dataset]" --logpath "[Location to the log directory]" --batch 50 --max-inner-iter 5 --num-epochs 100 --num-jobs 2``
+``python main.py --train --fit-features --fit-comm --binarize --use-external-features --cutting-point 3650 --num-components 100 --lambdas 0.01 0.01 0.01 0.01 0.001 10 --M-name "M.pkl" --P-name "P.pkl" --E-name "E.pkl"  --A-name "A.pkl" --B-name "B.pkl" --X-name "biocyc_Xe.pkl" --y-name "biocyc_y.pkl" --model-name "[model name (without extension)]" --mdpath "[path to the model]" --dspath "[path to the dataset]" --logpath "[path to the log directory]" --batch 50 --max-inner-iter 5 --num-epochs 100 --num-jobs 2``
 
 #### Example 4
 If you wish to use the previously **decomposed** *M* of 100 components to train multi-label dataset while using **features** and **community**, execute the following command:
 
-``python main.py --train --no-decomposition --fit-features --fit-comm --binarize --use-external-features --cutting-point 3650 --num-components 100 --lambdas 0.01 0.01 0.01 0.01 0.001 10 --W-name "[Generated .pkl W file]" --H-name "[Generated .pkl H file]"  --P-name "P.pkl" --E-name "E.pkl"  --A-name "A.pkl" --B-name "B.pkl" --X-name "biocyc_Xe.pkl" --y-name "biocyc_y.pkl" --model-name "[Model name without extension]" --mdpath "[Location of the model]" --dspath "[Location of the dataset]" --logpath "[Location to the log directory]" --batch 50 --max-inner-iter 5 --num-epochs 100 --num-jobs 2``
+``python main.py --train --no-decomposition --fit-features --fit-comm --binarize --use-external-features --cutting-point 3650 --num-components 100 --lambdas 0.01 0.01 0.01 0.01 0.001 10 --W-name "[Generated .pkl W file]" --H-name "[Generated .pkl H file]"  --P-name "P.pkl" --E-name "E.pkl"  --A-name "A.pkl" --B-name "B.pkl" --X-name "biocyc_Xe.pkl" --y-name "biocyc_y.pkl" --model-name "[model name (without extension)]" --mdpath "[path to the model]" --dspath "[path to the dataset]" --logpath "[path to the log directory]" --batch 50 --max-inner-iter 5 --num-epochs 100 --num-jobs 2``
 
 ### Predicting
 For inference, we provide few examples. 
 
-Description about arguments in all of given examples: *--cutting-point* is the cutting point after which binarize operation is halted in the input data, *--decision-threshold* corresponds the cutoff threshold for prediction, and *--model-name* corresponds the name of the model, excluding any *EXTENSION*. The model name will have *.pkl* extension.
+Description about arguments in all examples: *--binarize* is a boolean variable indicating whether to binarize data, *--cutting-point* is the cutting point after which binarize operation is halted in the input data,  *--decision-threshold* corresponds the cutoff threshold for prediction, *--object-name* is an object containing the preprocessed MetaCyc database, *--pathway2ec-name* is a matrix representing Pathway-EC association, *--pathway2ec-idx-name* corresponds the pathway2ec association indices, *--hin-name* is the heterogeneous information network, *--features-name* is features corresponding ECs and pathways, *--file-name* corresponds the name of several preprocessed files (without extension), *--batch* is batch size, *--num-jobs* corresponds the number of parallel workers, and *--model-name* corresponds the name of the model excluding any *EXTENSION*. The model name will have *.pkl* extension. The arguments *--X-name* is the input space of multi-label data. For the dataset, any multi-label dataset can be employed.
+
 
 #### Example 1
-To **predict** outputs from a dataset using already trained model with decomposed *M* of 100 components while using **features** and **community**, execute the following command:
+To **predict** outputs from a dataset (e.g. "cami_Xe.pkl") using already trained model (e.g. "triUMPF_e.pkl") with decomposed *M* of 100 components while using **features** and **community**, execute the following command:
 
-``python main.py --predict --cutting-point 3650 --decision-threshold 0.5 --X-name 'cami_Xe.pkl' --file-name "[Various results file names without extension]" --model-name "[Model name without extension]" --dspath "[Location of the dataset and to store predicted results]" --mdpath "[Location of the model]" --logpath "[Location to the log directory]" --batch 50 --num-jobs 2``
+``python main.py --predict --binarize --cutting-point 3650 --decision-threshold 0.5 --X-name "cami_Xe.pkl" --file-name "triUMPF" --model-name "triUMPF_e.pkl" --dspath "[path to the dataset and to store predicted results]" --mdpath "[path to the model]" --logpath "[path to the log directory]" --batch 50 --num-jobs 2``
 
 #### Example 2
 
-To **predict** outputs and **compile pathway report** from a dataset, generated by MetaPath v2, using already trained model with decomposed *M* of 100 components while using **features** and **community**, execute the following command:
+To **predict** outputs and **compile pathway report** from a dataset (e.g. "symbionts_Xe.pkl"), generated by MetaPathways v2, using already trained model (e.g. "triUMPF_e.pkl") with decomposed *M* of 100 components while using **features** and **community**, execute the following command:
 
-``python main.py --predict --pathway-report --cutting-point 3650 --decision-threshold 0.5 --object-name "biocyc.pkl" --pathway2ec-idx-name "pathway2ec_idx.pkl" --pathway2ec-name 'pathway2ec.pkl' --hin-name "hin.pkl" --features-name "pathway2vec_embeddings.npz" --X-name 'cami_Xe.pkl' --file-name "[Various results file names without extension]" --model-name "[Model name without extension]" --rsfolder "[Name of the main folder]" --dspath "[Location of the dataset and to store predicted results]" --mdpath "[Location of the model]" --rspath "[Location for storing results]" --logpath "[Location to the log directory]" --batch 50 --num-jobs 2``
+``python main.py --predict --binarize --pathway-report --cutting-point 3650 --decision-threshold 0.5 --object-name "biocyc.pkl" --pathway2ec-idx-name "pathway2ec_idx.pkl" --pathway2ec-name "pathway2ec.pkl" --hin-name "hin.pkl" --features-name "pathway2vec_embeddings.npz" --X-name "symbionts_Xe.pkl" --file-name "triUMPF" --model-name "triUMPF_e.pkl" --rsfolder "[name of the main folder]" --dspath "[path to the dataset and to store predicted results]" --mdpath "[path to the model]" --rspath "[path to storing results]" --logpath "[path to the log directory]" --batch 50 --num-jobs 2``
 
 where *--pathway-report* enables to generate a detailed report for pathways for each instance.
 
