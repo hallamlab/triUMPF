@@ -21,42 +21,42 @@ Basically, *triUMPF* requires following packages:
 Please download the following files from [Zenodo](https://zenodo.org/record/3711138#.Xn2fgXVKjeQ). 
 - The link contains the following preprocessed files:
     - "biocyc.pkl": an object containing the preprocessed MetaCyc database.
-    - "pathway2ec.pkl": a matrix representing Pathway-EC association of size 3650 x 2526.
+    - "pathway2ec.pkl": a matrix representing Pathway-EC association of size (3650, 2526).
     - "pathway2ec_idx.pkl": the pathway2ec association indices.                        
     - "M.pkl": a sub matrix from pathway2ec.
-    - "A.pkl": Pathway-Pathway interaction matrix of size 2526 x 2526.
-    - "B.pkl": EC-EC interaction matrix of size 3650 x 3650.
-    - "P.pkl": Pathway features matrix of size 2526 x 128.
-    - "E.pkl": EC features matrix of size 3650 x 128.
+    - "A.pkl": Pathway-Pathway interaction matrix of size (2526, 2526).
+    - "B.pkl": EC-EC interaction matrix of size (3650, 3650).
+    - "P.pkl": Pathway features matrix of size (2526, 128).
+    - "E.pkl": EC features matrix of size (3650, 128).
     - "hin.pkl": a sample of heterogeneous information network. 
-    - "pathway2vec_embeddings.npz": a sample of embeddings (nodes x dimension size). Based on your tests, you need to generate features using [pathway2vec](https://github.com/hallamlab/pathway2vec).
+    - "pathway2vec_embeddings.npz": a sample of embeddings (nodes, dimension size). Based on your tests, you need to generate features using [pathway2vec](https://github.com/hallamlab/pathway2vec).
 - We also provided pretrained models and samples for testing:
-    - "golden_X.pkl": Golden dataset of size 63 x 3650. First six examples correspond to: AraCyc, EcoCyc, HumanCyc, LeishCyc, TrypanoCyc, and YeastCyc.
-    - "golden_Xe.pkl": Golden dataset of size 63 x 3778. First six examples correspond to: AraCyc, EcoCyc, HumanCyc, LeishCyc, TrypanoCyc, and YeastCyc.
-    - "golden_y.pkl": Golden dataset of size 63 x 2526. First six examples correspond pathways to: AraCyc, EcoCyc, HumanCyc, LeishCyc, TrypanoCyc, and YeastCyc.
-    - "symbionts_X.pkl": Symbiont dataset of size 3 x 3650.
-    - "symbionts_Xe.pkl": Symbiont dataset of size 3 x 3778.
-    - "symbionts_y.pkl": Symbiont dataset of size 3 x 2526.
-    - "cami_X.pkl": CAMI dataset of size 40 x 3650.
-    - "cami_Xe.pkl": CAMI dataset of size 40 x 3778.
-    - "cami_y.pkl": CAMI dataset of size 40 x 2526.
-    - "hots_4_X.pkl": HOT metagenomics dataset of size 6 x 3650.
-    - "hots_4_Xe.pkl": HOT metagenomics dataset of size 6 x 3778.
-    - "hots_4_y.pkl": HOT metagenomics dataset of size 6 x 2526.
-    - "biocyc205_tier23_9255_X.pkl": BioCyc (v20.5 tier 2 \& 3) dataset of size 9255 x 3650.
-    - "biocyc205_tier23_9255_Xe.pkl": BioCyc (v20.5 tier 2 \& 3) dataset of size 9255 x 3778.
-    - "biocyc205_tier23_9255_y.pkl": BioCyc (v20.5 tier 2 \& 3) dataset of size 9255 x 2526.
+    - "golden_X.pkl": Golden dataset of size (63, 3650). First six examples correspond to: AraCyc, EcoCyc, HumanCyc, LeishCyc, TrypanoCyc, and YeastCyc.
+    - "golden_Xe.pkl": Golden dataset of size (63, 3778. First six examples correspond to: AraCyc, EcoCyc, HumanCyc, LeishCyc, TrypanoCyc, and YeastCyc.
+    - "golden_y.pkl": Golden dataset of size (63, 2526). First six examples correspond pathways to: AraCyc, EcoCyc, HumanCyc, LeishCyc, TrypanoCyc, and YeastCyc.
+    - "symbionts_X.pkl": Symbiont dataset of size (3, 3650).
+    - "symbionts_Xe.pkl": Symbiont dataset of size (3, 3778).
+    - "symbionts_y.pkl": Symbiont dataset of size (3, 2526).
+    - "cami_X.pkl": CAMI dataset of size (40, 3650).
+    - "cami_Xe.pkl": CAMI dataset of size (40, 3778).
+    - "cami_y.pkl": CAMI dataset of size (40, 2526).
+    - "hots_4_X.pkl": HOT metagenomics dataset of size (6, 3650).
+    - "hots_4_Xe.pkl": HOT metagenomics dataset of size (6, 3778).
+    - "hots_4_y.pkl": HOT metagenomics dataset of size (6, 2526).
+    - "biocyc205_tier23_9255_X.pkl": BioCyc (v20.5 tier 2 \& 3) dataset of size (9255, 3650).
+    - "biocyc205_tier23_9255_Xe.pkl": BioCyc (v20.5 tier 2 \& 3) dataset of size (9255, 3778).
+    - "biocyc205_tier23_9255_y.pkl": BioCyc (v20.5 tier 2 \& 3) dataset of size (9255, 2526).
     - "triUMPF_X.pkl": a pretrained model using "biocyc205_tier23_9255_X.pkl" and "biocyc205_tier23_9255_y.pkl".
-    - "triUMPF_X_W.pkl": a pretrained latent factors for pathways of size 2526 x 100.
-    - "triUMPF_X_H.pkl": a pretrained basis matrix for ECs of size 3650 x 100.
-    - "triUMPF_X_U.pkl": an auxilary matrix of size 128 x 100.
-    - "triUMPF_X_V.pkl": an auxilary matrix of size 128 x 100.
-    - "triUMPF_X_T.pkl": a pathway community representation matrix of size 128 x 90.
-    - "triUMPF_X_C.pkl": a pathway community indicator matrix of size 2526 x 90.
-    - "triUMPF_X_R.pkl": a EC community representation matrix of size 128 x 100.
-    - "triUMPF_X_K.pkl": a EC community representation matrix of size 3650 x 100.
-    - "triUMPF_X_L.pkl": an auxilary matrix of size 9255 x 128.
-    - "triUMPF_X_Z.pkl": an auxilary matrix of size 9255 x 3650.
+    - "triUMPF_X_W.pkl": a pretrained latent factors for pathways of size (2526, 100).
+    - "triUMPF_X_H.pkl": a pretrained basis matrix for ECs of size (3650, 100).
+    - "triUMPF_X_U.pkl": an auxilary matrix of size (128, 100).
+    - "triUMPF_X_V.pkl": an auxilary matrix of size (128, 100).
+    - "triUMPF_X_T.pkl": a pathway community representation matrix of size (128, 90).
+    - "triUMPF_X_C.pkl": a pathway community indicator matrix of size (2526, 90).
+    - "triUMPF_X_R.pkl": a EC community representation matrix of size (128, 100).
+    - "triUMPF_X_K.pkl": a EC community representation matrix of size (3650, 100).
+    - "triUMPF_X_L.pkl": an auxilary matrix of size (9255, 128).
+    - "triUMPF_X_Z.pkl": an auxilary matrix of size (9255, 3650).
     - "triUMPF_e.pkl": a pretrained model using "biocyc205_tier23_9255_Xe.pkl" and "biocyc205_tier23_9255_y.pkl".
     - "triUMPF_e\*.pkl": Descriptions about the remaining matrices are same as triUMPF_X\*.
 
