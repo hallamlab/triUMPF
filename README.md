@@ -73,17 +73,17 @@ To preprocess data, we provide few examples.
 #### Example 1
 To preprocess datasets with **no noise** to the pathway2ec association matrix ("pathway2ec.pkl"), execute the following command:
 
-``python main.py --preprocess-dataset --ssample-input-size 1 --object-name "biocyc.pkl" --pathway2ec-name "pathway2ec.pkl" --pathway2ec-pidx-name "pathway2ec_idx.pkl" --features-name "pathway2vec_embeddings.npz" --hin-name "hin.pkl" --mdpath [Location of the features] --ospath [Location to all objects except features]``
+``python main.py --preprocess-dataset --ssample-input-size 1 --object-name "biocyc.pkl" --pathway2ec-name "pathway2ec.pkl" --pathway2ec-pidx-name "pathway2ec_idx.pkl" --features-name "pathway2vec_embeddings.npz" --hin-name "hin.pkl" --mdpath "[path to the feature file]" --ospath "[path to all object files excluding the feature file]"``
 
 #### Example 2
 To preprocess datasets with **20% noise** to the pathway2ec association matrix ("pathway2ec.pkl"), execute the following command:
 
-``python main.py --preprocess-dataset --ssample-input-size 0.2 --object-name "biocyc.pkl" --pathway2ec-name "pathway2ec.pkl" --pathway2ec-pidx-name "pathway2ec_idx.pkl" --features-name "pathway2vec_embeddings.npz" --hin-name "hin.pkl" --mdpath [Location of the features] --ospath [Location to all objects except features]``
+``python main.py --preprocess-dataset --ssample-input-size 0.2 --object-name "biocyc.pkl" --pathway2ec-name "pathway2ec.pkl" --pathway2ec-pidx-name "pathway2ec_idx.pkl" --features-name "pathway2vec_embeddings.npz" --hin-name "hin.pkl" --mdpath "[path to the feature file]" --ospath "[path to all object files excluding the feature file]"``
 
 #### Example 3
 To preprocess datasets with **20% noise** to the pathway2ec association (*pathway2ec.pkl*), the pathway to pathway association (*A*), and the EC to EC association (*B*) matrices, execute the following command:
 
-``python main.py --preprocess-dataset --white-links --ssample-input-size 0.2 --object-name "biocyc.pkl" --pathway2ec-name "pathway2ec.pkl" --pathway2ec-pidx-name "pathway2ec_idx.pkl" --features-name "pathway2vec_embeddings.npz" --hin-name "hin.pkl" --mdpath [Location of the features] --ospath [Location to all objects except features]``
+``python main.py --preprocess-dataset --white-links --ssample-input-size 0.2 --object-name "biocyc.pkl" --pathway2ec-name "pathway2ec.pkl" --pathway2ec-pidx-name "pathway2ec_idx.pkl" --features-name "pathway2vec_embeddings.npz" --hin-name "hin.pkl" --mdpath "[path to the feature file]" --ospath "[path to all object files excluding the feature file]"``
 
 ### Training
 For trainning, we provide few examples. 
