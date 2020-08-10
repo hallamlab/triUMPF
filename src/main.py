@@ -102,12 +102,10 @@ def __internal_args(parse_args):
     arg.train = parse_args.train
     arg.predict = parse_args.predict
     arg.pathway_report = parse_args.pathway_report
-    arg.extract_pf = True
-    if parse_args.no_parse:
-        arg.extract_pf = False
-    arg.build_features = True
-    if parse_args.no_build_features:
-        arg.build_features = False
+    arg.extract_pf = False
+    if parse_args.parse_pf:
+        arg.extract_pf = True
+    arg.build_features = parse_args.build_features:
     arg.plot = parse_args.plot
     arg.num_components = parse_args.num_components
     arg.num_communities_p = parse_args.num_communities_p
@@ -241,10 +239,10 @@ def parse_command_line():
     parser.add_argument('--pathway-report', action='store_true', default=False,
                         help='Whether to generate a detailed report for pathways for each instance. '
                              '(default value: False).')
-    parser.add_argument('--no-parse', action='store_true', default=False,
+    parser.add_argument('--parse-pf', action='store_true', default=False,
                         help='Whether to parse Pathologic format file (pf) from a folder (default value: False).')
-    parser.add_argument('--no-build-features', action='store_true', default=True,
-                        help='Whether to construct features (default value: True).')
+    parser.add_argument('--build-features', action='store_true', default=False,
+                        help='Whether to construct features (default value: False).')
     parser.add_argument('--plot', action='store_true', default=False,
                         help='Whether to produce various plots from predicted outputs. '
                              '(default value: False).')
