@@ -273,13 +273,14 @@ def __train(arg):
                     node2idx_pathway2ec = [node[0] for node in hin.nodes(data=True)]
                     del hin
                     print('\t>> Loading path2vec_features file...')
-                    path2vec_features = np.load(file=os.path.join(arg.mdpath, arg.features_name))
+                    path2vec_features = np.load(file=os.path.join(arg.ospath, arg.features_name))
                     __build_features(X=X, pathwat_dict=pathway_dict, ec_dict=ec_dict,
                                      labels_components=labels_components,
                                      node2idx_pathway2ec=node2idx_pathway2ec,
                                      path2vec_features=path2vec_features,
                                      file_name=arg.file_name, dspath=arg.dspath,
                                      batch_size=arg.batch, num_jobs=arg.num_jobs)
+                    
         # load files
         print('\t>> Loading necessary files......')
         X = load_data(file_name=arg.X_name, load_path=arg.dspath, tag="X")
