@@ -4,12 +4,11 @@ triUMPF: tri-Non-negative Matrix Factorization
 
 import copy
 import logging
+import numpy as np
 import os
 import sys
 import time
 import warnings
-
-import numpy as np
 from scipy.sparse import lil_matrix, hstack
 from scipy.special import expit
 from scipy.stats import truncnorm

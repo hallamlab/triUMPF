@@ -1,10 +1,9 @@
+import numpy as np
 import os
+import pandas as pd
 import shutil
 import sys
 import warnings
-
-import numpy as np
-import pandas as pd
 from scipy.sparse import lil_matrix
 from sklearn.metrics import confusion_matrix, coverage_error
 from sklearn.metrics import f1_score, precision_score, recall_score

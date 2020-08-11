@@ -3,13 +3,12 @@ This file is the main entry used to train the input dataset
 using triUMPF train and also report the predicted vocab.
 '''
 
+import networkx as nx
+import numpy as np
 import os
 import sys
 import time
 import traceback
-
-import networkx as nx
-import numpy as np
 from model.triumpf import triUMPF
 from scipy.sparse import lil_matrix, hstack
 from sklearn import preprocessing
@@ -280,7 +279,7 @@ def __train(arg):
                                      path2vec_features=path2vec_features,
                                      file_name=arg.file_name, dspath=arg.dspath,
                                      batch_size=arg.batch, num_jobs=arg.num_jobs)
-                    
+
         # load files
         print('\t>> Loading necessary files......')
         X = load_data(file_name=arg.X_name, load_path=arg.dspath, tag="X")
