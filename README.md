@@ -63,8 +63,7 @@ Please download the following files from [Zenodo](https://zenodo.org/record/3711
     - "triUMPF_X_Z.pkl": an auxilary matrix of size (9255, 3650).
     - "triUMPF_e.pkl": a pretrained model using "biocyc205_tier23_9255_Xe.pkl" and "biocyc205_tier23_9255_y.pkl".
     - "triUMPF_e\*.pkl": Descriptions about the remaining matrices are same as triUMPF_X\*.
-
-The three E.coli genomes can be access from [here](src/sample). The indices correspond: 0 to Escherichia coli CFT073, 1 to Escherichia coli O157:H7 str. EDL933, and 2 to Escherichia coli str. MG1655:
+- The three E.coli genomes can be access from [here](src/sample). The indices correspond: 0 to Escherichia coli CFT073, 1 to Escherichia coli O157:H7 str. EDL933, and 2 to Escherichia coli str. MG1655:
     - "biocyc_ecoli_X.pkl": three E.coli data of size (3, 3650).
     - "biocyc_ecoli_Xe.pkl": three E.coli data of size (3, 3778).
     - "biocyc_ecoli_triumpf_y.pkl": triUMPF (using triUMPF_e.pkl) predicted pathways on the three E.coli data of size (3, 2526).
