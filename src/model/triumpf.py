@@ -322,7 +322,7 @@ class triUMPF:
             labels = np.arange(self.num_labels)
             if len(labels) > self.subsample_labels_size:
                 labels = np.random.choice(np.arange(self.num_labels), self.subsample_labels_size, replace=False)
-            parallel = Parallel(n_jobs=self.num_jobs, verbose=max(0, self.verbose - 1))
+            parallel = Parallel(n_jobs=self.num_jobs, prefer="threads", verbose=max(0, self.verbose - 1))
             results = parallel(delayed(self.__cost_logistic)(X, y, label_idx)
                                for label_idx in labels)
             loss += np.mean(results)
@@ -565,7 +565,7 @@ class triUMPF:
 
     def __optimize_comm(self, X, y, P, E, A, B, samples_idx):
         """Compute Non-negative Matrix Factorization with Multiplicative Update"""
-        parallel = Parallel(n_jobs=1, verbose=max(0, self.verbose - 1))
+        parallel = Parallel(n_jobs=self.num_jobs, prefer="threads", verbose=max(0, self.verbose - 1))
         list_batches = np.arange(start=0, stop=len(samples_idx), step=self.batch)
         current_progress = 1
         total_progress = len(list_batches) * self.max_inner_iter * 2
@@ -582,7 +582,7 @@ class triUMPF:
             current_progress += len(list_batches)
 
     def __optimize_path(self, X, y, W, H, P, E, A, B, samples_idx, learning_rate):
-        parallel = Parallel(n_jobs=1, verbose=max(0, self.verbose - 1))
+        parallel = Parallel(n_jobs=self.num_jobs, prefer="threads", verbose=max(0, self.verbose - 1))
         list_batches = np.arange(start=0, stop=len(samples_idx), step=self.batch)
 
         # optimize T
@@ -1039,7 +1039,7 @@ class triUMPF:
         X = lil_matrix(X)
         num_samples = X.shape[0]
         list_batches = np.arange(start=0, stop=num_samples, step=self.batch)
-        parallel = Parallel(n_jobs=self.num_jobs, verbose=max(0, self.verbose - 1))
+        parallel = Parallel(n_jobs=self.num_jobs, prefer="threads", verbose=max(0, self.verbose - 1))
         prob_label = parallel(delayed(self.__predict)(X[batch:batch + self.batch],
                                                       batch_idx, len(list_batches))
                               for batch_idx, batch in enumerate(list_batches))
