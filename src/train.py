@@ -3,16 +3,18 @@ This file is the main entry used to train the input dataset
 using triUMPF train and also report the predicted vocab.
 '''
 
-import networkx as nx
-import numpy as np
 import os
 import sys
 import time
 import traceback
-from model.triumpf import triUMPF
+
+import networkx as nx
+import numpy as np
 from scipy.sparse import lil_matrix, hstack
 from sklearn import preprocessing
 from sklearn.utils._joblib import Parallel, delayed
+
+from model.triumpf import triUMPF
 from utility.access_file import load_data, save_data
 from utility.model_utils import synthesize_report, compute_abd_cov
 from utility.parse_input import parse_files
