@@ -105,7 +105,7 @@ def __internal_args(parse_args):
     arg.extract_pf = False
     if parse_args.parse_pf:
         arg.extract_pf = True
-    arg.build_features = parse_args.build_features:
+    arg.build_features = parse_args.build_features
     arg.plot = parse_args.plot
     arg.num_components = parse_args.num_components
     arg.num_communities_p = parse_args.num_communities_p
@@ -207,9 +207,9 @@ def parse_command_line():
     parser.add_argument('--H-name', type=str, default='H.pkl',
                         help='The H file name. (default value: "H.pkl")')
     parser.add_argument('--X-name', type=str, default='golden_Xe.pkl',
-                        help='The X file name. (default value: "biocyc_Xe.pkl")')
+                        help='The X file name. (default value: "golden_Xe.pkl")')
     parser.add_argument('--y-name', type=str, default='golden_y.pkl',
-                        help='The y file name. (default value: "biocyc_y.pkl")')
+                        help='The y file name. (default value: "golden_y.pkl")')
     parser.add_argument('--P-name', type=str, default='P.pkl',
                         help='The pathway features file name. (default value: "P.pkl")')
     parser.add_argument('--E-name', type=str, default='E.pkl',
@@ -219,11 +219,11 @@ def parse_command_line():
     parser.add_argument('--B-name', type=str, default='B.pkl',
                         help='The EC to EC association file name. (default value: "B.pkl")')
     parser.add_argument('--samples-ids', type=str, default=None,
-                        help='The samples ids file name. (default value: "SAG_ids.pkl")')
-    parser.add_argument('--file-name', type=str, default='triUMPF_symbionts',
-                        help='The file name to save various scores and communities files. (default value: "triUMPF_O_final")')
-    parser.add_argument('--model-name', type=str, default='triUMPF_C_final',
-                        help='The file name, excluding extension, to save an object. (default value: "triUMPF_O_final")')
+                        help='The samples ids file name. (default value: "ids.pkl")')
+    parser.add_argument('--file-name', type=str, default='triUMPF',
+                        help='The file name to save various scores and communities files. (default value: "triUMPF")')
+    parser.add_argument('--model-name', type=str, default='triUMPF',
+                        help='The file name, excluding extension, to save an object. (default value: "triUMPF")')
 
     # Arguments for preprocessing dataset
     parser.add_argument('--preprocess-dataset', action='store_true', default=False,
