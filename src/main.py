@@ -10,7 +10,7 @@ __description__ = "This file is the main entry to perform learning and predictio
 
 import datetime
 import json
-import os
+import os, sys
 import textwrap
 from argparse import ArgumentParser
 
@@ -20,7 +20,10 @@ from utility.arguments import Arguments
 
 
 def __print_header():
-    os.system('clear')
+    if sys.platform.startswith('win'): 
+        os.system("cls")
+    else:
+        os.system("clear")
     print('# ' + '=' * 50)
     print('Author: ' + __author__)
     print('Copyright: ' + __copyright__)
