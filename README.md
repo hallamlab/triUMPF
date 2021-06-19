@@ -156,7 +156,7 @@ where *--pathway-report* enables to generate a detailed report for pathways for 
 
 If you find *triUMPF* useful in your research, please consider citing the following paper:
 
-- M. A. Basher, Abdur Rahman, McLaughlin, Ryan J., and Hallam, Steven J.. **["Metabolic pathway inference using non-negative matrix factorization with community detection."](https://doi.org/10.1101/2020.05.27.119826)**, bioRxiv (2020).
+- M. A. Basher, Abdur Rahman, McLaughlin, Ryan J., and Hallam, Steven J.. **["Metabolic pathway prediction using non-negative matrix factorization with improved precision"](https://doi.org/10.1101/2020.05.27.119826)**, bioRxiv (2021).
 
 ## Contact
 
