@@ -90,6 +90,7 @@ def __internal_args(parse_args):
     arg.file_name = parse_args.file_name
     arg.samples_ids = parse_args.samples_ids
     arg.model_name = parse_args.model_name
+    arg.dsname = parse_args.dsname
 
     ##########################################################################################################
     ##########                            ARGUMENTS PREPROCESSING FILES                             ##########
@@ -103,6 +104,7 @@ def __internal_args(parse_args):
     ##########################################################################################################
 
     arg.train = parse_args.train
+    arg.evaluate = parse_args.evaluate
     arg.predict = parse_args.predict
     arg.pathway_report = parse_args.pathway_report
     arg.extract_pf = False
@@ -227,7 +229,9 @@ def parse_command_line():
                         help='The file name to save various scores and communities files. (default value: "triUMPF")')
     parser.add_argument('--model-name', type=str, default='triUMPF',
                         help='The file name, excluding extension, to save an object. (default value: "triUMPF")')
-
+    parser.add_argument('--dsname', type=str, default='golden',
+                        help='The data name used for evaluation. (default value: "golden ")')
+                        
     # Arguments for preprocessing dataset
     parser.add_argument('--preprocess-dataset', action='store_true', default=False,
                         help='Preprocess dataset. (default value: False).')
@@ -237,6 +241,8 @@ def parse_command_line():
     # Arguments for training and evaluation
     parser.add_argument('--train', action='store_true', default=False,
                         help='Whether to train the triUMPF model. (default value: False).')
+    parser.add_argument('--evaluate', action='store_true', default=False,
+                        help='Whether to evaluate triUMPF\'s performances. (default value: False).')
     parser.add_argument('--predict', action='store_true', default=False,
                         help='Whether to predict labels from inputs. (default value: False).')
     parser.add_argument('--pathway-report', action='store_true', default=False,
@@ -311,7 +317,7 @@ def parse_command_line():
     parser.add_argument("--decision-threshold", type=float, default=0.5,
                         help="The cutoff threshold for triUMPF. (default value: 0.5)")
     parser.add_argument('--top-k', type=int, default=10,
-                        help='Top k features. (default value: 10).')
+                        help='Top k features or labels to be considered for computing psp. (default value: 10).')                        
     parser.add_argument('--ssample-input-size', default=0.05, type=float,
                         help='The size of input subsample. (default value: 0.05)')
     parser.add_argument('--ssample-label-size', default=1000, type=int,

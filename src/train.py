@@ -16,7 +16,7 @@ from sklearn.utils._joblib import Parallel, delayed
 
 from model.triumpf import triUMPF
 from utility.access_file import load_data, save_data
-from utility.model_utils import synthesize_report, compute_abd_cov
+from utility.model_utils import score, synthesize_report, compute_abd_cov
 from utility.parse_input import parse_files
 
 
@@ -231,6 +231,37 @@ def __train(arg):
         model.fit(M=labels_components, W=W, H=H, X=X, y=y, P=P, E=E, A=A, B=B, model_name=arg.model_name,
                   model_path=arg.mdpath, result_path=arg.rspath, display_params=display_params)
 
+
+    ##########################################################################################################
+    ######################                           EVALUATE                           ######################
+    ##########################################################################################################
+
+    if arg.evaluate:
+        print('\n{0})- Evaluating triUMPF model...'.format(steps))
+        steps = steps + 1
+
+        # load files
+        print('\t>> Loading files...')
+        X = load_data(file_name=arg.X_name, load_path=arg.dspath, tag="X")
+        y = load_data(file_name=arg.y_name, load_path=arg.dspath, tag="y")
+
+        # load model
+        model = load_data(file_name=arg.model_name + '.pkl', load_path=arg.mdpath, tag='triUMPF')
+
+        # labels prediction score
+        y_pred = model.predict(X=X.toarray(), estimate_prob=False, apply_t_criterion=arg.apply_tcriterion,
+                               adaptive_beta=arg.adaptive_beta, decision_threshold=arg.decision_threshold,
+                               top_k=arg.top_k, batch_size=arg.batch, num_jobs=arg.num_jobs)
+
+        file_name = arg.file_name + '_scores.txt'
+        if arg.dsname == 'golden':
+            score(y_true=y.toarray(), y_pred=y_pred.toarray(), item_lst=[arg.dsname], six_db=True,
+                  top_k=arg.top_k, mode='a', file_name=file_name, save_path=arg.rspath)
+        else:
+            score(y_true=y.toarray(), y_pred=y_pred.toarray(), item_lst=[arg.dsname], six_db=False,
+                  top_k=arg.top_k, mode='a', file_name=file_name, save_path=arg.rspath)
+                      
+                      
     ##########################################################################################################
     ######################                    PREDICT USING triUMPF                     ######################
     ##########################################################################################################
@@ -250,7 +281,7 @@ def __train(arg):
             del data_object
             pathway_dict = dict((idx, id) for id, idx in pathway_dict.items())
             ec_dict = dict((idx, id) for id, idx in ec_dict.items())
-            labels_components = load_data(file_name=arg.pathway2ec_name, load_path=arg.ospath, tag='M')
+            labels_components = load_data(file_name=arg.pathway2ec_name, load_path=arg.ospath, tag='pathway2ec')
             print('\t>> Loading label to component mapping file object...')
             pathway2ec_idx = load_data(file_name=arg.pathway2ec_idx_name, load_path=arg.ospath, print_tag=False)
             pathway2ec_idx = list(pathway2ec_idx)
@@ -317,15 +348,18 @@ def __train(arg):
 
 def train(arg):
     try:
-        if arg.preprocess_dataset or arg.train or arg.predict:
+        if arg.preprocess_dataset or arg.train or arg.evaluate or arg.predict:
             actions = list()
             if arg.preprocess_dataset:
                 actions += ['PREPROCESS DATASETs']
             if arg.train:
                 actions += ['TRAIN MODELs']
+            if arg.evaluate:
+                actions += ['EVALUATE MODELs']
             if arg.predict:
                 actions += ['PREDICT RESULTS USING SPECIFIED MODELs']
-            desc = [str(item[0] + 1) + '. ' + item[1] for item in zip(list(range(len(actions))), actions)]
+            desc = [str(item[0] + 1) + '. ' + item[1]
+                    for item in zip(list(range(len(actions))), actions)]
             desc = ' '.join(desc)
             print('\n*** APPLIED ACTIONS ARE: {0}'.format(desc))
             timeref = time.time()
