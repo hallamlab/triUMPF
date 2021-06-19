@@ -45,8 +45,6 @@ def __build_features(X, pathwat_dict, ec_dict, labels_components, node2idx_pathw
     path2vec_features = path2vec_features[ec_features, :]
     ec_features = [np.mean(path2vec_features[row.rows[0]] * np.array(row.data[0])[:, None], axis=0)
                    for idx, row in enumerate(X)]
-    save_data(data=lil_matrix(ec_features), file_name=file_name + "_Xp.pkl", save_path=dspath, mode="wb",
-              tag="transformed instances to ec features")
     X = lil_matrix(hstack((tmp, ec_features)))
     save_data(data=X, file_name=file_name + "_Xe.pkl", save_path=dspath, mode="wb",
               tag="concatenated ec features with instances")
