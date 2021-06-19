@@ -20,7 +20,7 @@ from utility.arguments import Arguments
 
 
 def __print_header():
-    if sys.platform.startswith('win'): 
+    if sys.platform.startswith('win'):
         os.system("cls")
     else:
         os.system("clear")
@@ -32,7 +32,7 @@ def __print_header():
     print('Maintainer: ' + __maintainer__)
     print('Email: ' + __email__)
     print('Status: ' + __status__)
-    print('Date: ' + datetime.datetime.strptime(__date__, "%d/%m/%Y").strftime("%d-%Q-%Y"))
+    print('Date: ' + datetime.datetime.strptime(__date__, "%d/%m/%Y").strftime("%d-%B-%Y"))
     print('Description: ' + textwrap.TextWrapper(width=45, subsequent_indent='\t     ').fill(__description__))
     print('# ' + '=' * 50)
 
