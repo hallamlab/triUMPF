@@ -9,8 +9,8 @@ import sys
 from collections import OrderedDict
 
 import numpy as np
+from joblib import Parallel, delayed
 from scipy.sparse import lil_matrix
-from sklearn.utils._joblib import Parallel, delayed
 
 
 def create_remove_dir(folder_path):
@@ -117,8 +117,7 @@ def __preprocess(ec_dict, data_folder_path, result_folder_path, num_jobs=2):
     sample_ids = [os.path.split(opath)[-1] for opath in lst_ipaths]
     for sidx, sid in enumerate(sample_ids):
         create_remove_dir(folder_path=os.path.join(result_folder_path, sid))
-        # input_path = os.path.join(lst_ipaths[sidx], 'ptools')
-        input_path = os.path.join(lst_ipaths[sidx], '1.0/input')
+        input_path = lst_ipaths[sidx]
         for file_name in os.listdir(input_path):
             if file_name.endswith('.pf'):
                 input_file = os.path.join(input_path, file_name)
@@ -127,7 +126,7 @@ def __preprocess(ec_dict, data_folder_path, result_folder_path, num_jobs=2):
     lst_ipaths = sorted([os.path.join(result_folder_path, folder) for folder in os.listdir(result_folder_path)
                          if os.path.isdir(os.path.join(data_folder_path, folder))])
     print('\t>> Extracting input information from {0} files...'.format(len(lst_ipaths)))
-    parallel = Parallel(n_jobs=num_jobs, verbose=0)
+    parallel = Parallel(n_jobs=num_jobs, prefer="threads", verbose=0)
     results = parallel(delayed(__extract_input_from_pf_files)(item, idx, len(lst_ipaths))
                        for idx, item in enumerate(lst_ipaths))
     output = results
@@ -155,8 +154,8 @@ def __preprocess(ec_dict, data_folder_path, result_folder_path, num_jobs=2):
 
 # ---------------------------------------------------------------------------------------
 
-def parse_files(ec_dict, input_folder, rsfolder, rspath, num_jobs):
-    X, sample_ids = __preprocess(ec_dict=ec_dict, data_folder_path=input_folder,
-                                 result_folder_path=os.path.join(rspath, rsfolder),
+def parse_files(ec_dict, ds_folder, dspath, rspath, num_jobs):
+    X, sample_ids = __preprocess(ec_dict=ec_dict, data_folder_path=os.path.join(dspath, ds_folder),
+                                 result_folder_path=os.path.join(rspath, ds_folder),
                                  num_jobs=num_jobs)
     return lil_matrix(X), sample_ids

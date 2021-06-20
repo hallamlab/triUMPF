@@ -5,13 +5,13 @@ import warnings
 
 import numpy as np
 import pandas as pd
+from joblib import Parallel, delayed
 from scipy.sparse import lil_matrix
 from sklearn.metrics import confusion_matrix, coverage_error
 from sklearn.metrics import f1_score, precision_score, recall_score
 from sklearn.metrics import jaccard_score, hamming_loss
 from sklearn.metrics import label_ranking_average_precision_score
 from sklearn.metrics import label_ranking_loss
-from sklearn.utils._joblib import Parallel, delayed
 from utility.access_file import save_data
 
 EPSILON = np.finfo(np.float).eps
@@ -140,17 +140,16 @@ def __synthesize_report(X, sample_ids, y_pred_score, y_pred, y_dict_ids, y_commo
 
 
 def synthesize_report(X, sample_ids, y_pred, y_dict_ids, y_common_name, component_dict, labels_components,
-                      y_pred_score=None,
-                      batch_size=30, num_jobs=1, rsfolder="Results", rspath="../.", dspath="../.", file_name='labels'):
+                      y_pred_score=None, batch_size=30, num_jobs=1, rspath="../.", dspath="../.", file_name='labels'):
     if y_pred is None:
         raise Exception("Please provide two matrices as numpy matrix format: "
                         "(num_samples, num_labels), representing pathway scores "
                         "and the status of prediction as binary values.")
 
     num_samples = len(sample_ids)
-    main_folder_path = os.path.join(rspath, rsfolder)
+    main_folder_path = os.path.join(rspath, file_name)
     list_batches = np.arange(start=0, stop=num_samples, step=batch_size)
-    parallel = Parallel(n_jobs=num_jobs, verbose=0)
+    parallel = Parallel(n_jobs=num_jobs, prefer="threads", verbose=0)
 
     # Delete the previous main folder and recreate a new one
     create_remove_dir(folder_path=main_folder_path)
@@ -175,8 +174,8 @@ def synthesize_report(X, sample_ids, y_pred, y_dict_ids, y_common_name, componen
     print(desc)
     y = list(zip(*results))
     y = [item for lst in y for item in lst]
-    print('\t\t--> Storing predictions (label) to: {0:s}'.format(file_name + '_labels.pkl'))
-    save_data(data=y, file_name=file_name + '_labels.pkl', save_path=dspath, mode="wb",
+    print('\t\t--> Storing predictions (label) to: {0:s}'.format(file_name + '_labels_leads.pkl'))
+    save_data(data=y, file_name=file_name + '_labels_leads.pkl', save_path=dspath, mode="wb",
               print_tag=False)
     y_dict_ids = dict((y_id, y_idx) for y_idx, y_id in y_dict_ids.items())
     y_csr = np.zeros((len(y), len(y_dict_ids.keys())))
@@ -184,8 +183,8 @@ def synthesize_report(X, sample_ids, y_pred, y_dict_ids, y_common_name, componen
         for item in lst:
             if item in y_dict_ids:
                 y_csr[idx, y_dict_ids[item]] = 1
-    print('\t\t--> Storing predictions (label index) to: {0:s}'.format(file_name + '_y.pkl'))
-    save_data(data=lil_matrix(y_csr), file_name=file_name + "_y.pkl", save_path=dspath, mode="wb",
+    print('\t\t--> Storing predictions (label index) to: {0:s}'.format(file_name + '_y_leads.pkl'))
+    save_data(data=lil_matrix(y_csr), file_name=file_name + "_y_leads.pkl", save_path=dspath, mode="wb",
               print_tag=False)
 
 
@@ -229,7 +228,10 @@ def score(y_true, y_pred, item_lst, six_db=False, A=1, B=1, C=1, top_k=150, mode
           file_name='results.txt', save_path=''):
     idx_lst = [1]
     if six_db:
-        item_lst = ['AraCyc', 'EcoCyc', 'HumanCyc', 'LeishCyc', 'TrypanoCyc', 'YeastCyc']
+        item_lst = ['AraCyc', 'EcoCyc', 'HumanCyc',
+                    'LeishCyc', 'TrypanoCyc', 'YeastCyc']
+        if y_true.shape[0] == 4:
+            item_lst = ['AraCyc', 'EcoCyc', 'HumanCyc', 'YeastCyc']
         idx_lst = [idx for idx in np.arange(len(item_lst))]
     print('\t>> Scores are saved to {0:s}...'.format(str(file_name)))
     for i, idx in enumerate(idx_lst):
