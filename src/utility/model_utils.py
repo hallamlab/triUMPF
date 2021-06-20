@@ -174,8 +174,8 @@ def synthesize_report(X, sample_ids, y_pred, y_dict_ids, y_common_name, componen
     print(desc)
     y = list(zip(*results))
     y = [item for lst in y for item in lst]
-    print('\t\t--> Storing predictions (label) to: {0:s}'.format(file_name + '_labels_leads.pkl'))
-    save_data(data=y, file_name=file_name + '_labels_leads.pkl', save_path=dspath, mode="wb",
+    print('\t\t--> Storing predictions (label) to: {0:s}'.format(file_name + '_labels_triumpf.pkl'))
+    save_data(data=y, file_name=file_name + '_labels_triumpf.pkl', save_path=dspath, mode="wb",
               print_tag=False)
     y_dict_ids = dict((y_id, y_idx) for y_idx, y_id in y_dict_ids.items())
     y_csr = np.zeros((len(y), len(y_dict_ids.keys())))
@@ -183,8 +183,8 @@ def synthesize_report(X, sample_ids, y_pred, y_dict_ids, y_common_name, componen
         for item in lst:
             if item in y_dict_ids:
                 y_csr[idx, y_dict_ids[item]] = 1
-    print('\t\t--> Storing predictions (label index) to: {0:s}'.format(file_name + '_y_leads.pkl'))
-    save_data(data=lil_matrix(y_csr), file_name=file_name + "_y_leads.pkl", save_path=dspath, mode="wb",
+    print('\t\t--> Storing predictions (label index) to: {0:s}'.format(file_name + '_y_triumpf.pkl'))
+    save_data(data=lil_matrix(y_csr), file_name=file_name + "_y_triumpf.pkl", save_path=dspath, mode="wb",
               print_tag=False)
 
 

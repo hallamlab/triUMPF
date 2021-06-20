@@ -1,6 +1,6 @@
 __author__ = "Abdurrahman Abul-Basher"
-__date__ = '03/03/2020'
-__copyright__ = "Copyright 2020, The Hallam Lab"
+__date__ = '20/06/2021'
+__copyright__ = "Copyright 2021, The Hallam Lab"
 __license__ = "GPL"
 __version__ = "1.0"
 __maintainer__ = "Abdurrahman Abul-Basher"
@@ -10,7 +10,8 @@ __description__ = "This file is the main entry to perform learning and predictio
 
 import datetime
 import json
-import os, sys
+import os
+import sys
 import textwrap
 from argparse import ArgumentParser
 
@@ -64,7 +65,6 @@ def __internal_args(parse_args):
     arg.dsfolder = parse_args.dsfolder
     arg.mdpath = parse_args.mdpath
     arg.rspath = parse_args.rspath
-    arg.rsfolder = parse_args.rsfolder
     arg.logpath = parse_args.logpath
 
     ##########################################################################################################
@@ -110,8 +110,16 @@ def __internal_args(parse_args):
     arg.extract_pf = False
     if parse_args.parse_pf:
         arg.extract_pf = True
-    arg.build_features = parse_args.build_features
-    arg.plot = parse_args.plot
+    arg.binarize_input_feature = True
+    if parse_args.no_binarize:
+        arg.binarize_input_feature = False
+    arg.normalize_input_feature = parse_args.normalize
+    if arg.normalize_input_feature:
+        arg.binarize_input_feature = False
+    arg.use_external_features = True
+    if parse_args.no_external_features:
+        arg.use_external_features = False
+    arg.cutting_point = parse_args.cutting_point
     arg.num_components = parse_args.num_components
     arg.num_communities_p = parse_args.num_communities_p
     arg.num_communities_e = parse_args.num_communities_e
@@ -127,10 +135,6 @@ def __internal_args(parse_args):
     arg.beta = parse_args.beta
     arg.rho = parse_args.rho
     arg.lambdas = parse_args.lambdas
-    arg.binarize_input_feature = parse_args.binarize
-    arg.normalize_input_feature = parse_args.normalize
-    arg.use_external_features = parse_args.use_external_features
-    arg.cutting_point = parse_args.cutting_point
     arg.fit_intercept = parse_args.fit_intercept
     arg.penalty = parse_args.penalty
     arg.alpha_elastic = parse_args.alpha_elastic
@@ -159,13 +163,13 @@ def parse_command_line():
     # Parses the arguments.
     parser = ArgumentParser(description="Run triUMPF.")
 
-    parser.add_argument('--display-interval', default=2, type=int,
-                        help='display intervals. -1 means display per each iteration.')
+    parser.add_argument('--display-interval', default=1, type=int,
+                        help='display intervals. -1 means display per each iteration. (default value: 1).')
     parser.add_argument('--random_state', default=12345, type=int, help='Random seed. (default value: 12345).')
-    parser.add_argument('--num-jobs', type=int, default=1, help='Number of parallel workers. (default value: 1).')
-    parser.add_argument('--batch', type=int, default=30, help='Batch size. (default value: 30).')
-    parser.add_argument('--max-inner-iter', default=5, type=int,
-                        help='Number of inner iteration. 5. (default value: 5)')
+    parser.add_argument('--num-jobs', type=int, default=2, help='Number of parallel workers. (default value: 2).')
+    parser.add_argument('--batch', type=int, default=50, help='Batch size. (default value: 50).')
+    parser.add_argument('--max-inner-iter', default=100, type=int,
+                        help='Number of inner iteration. (default value: 100)')
     parser.add_argument('--num-epochs', default=10, type=int,
                         help='Number of epochs over the training set. (default value: 10).')
 
@@ -177,16 +181,14 @@ def parse_command_line():
     parser.add_argument('--dspath', default=fph.DATASET_PATH, type=str,
                         help='The path to the dataset after the samples are processed. '
                              'The default is set to dataset folder outside the source code.')
-    parser.add_argument('--dsfolder', default="SAG", type=str,
-                        help='The dataset folder name. The default is set to SAG.')
+    parser.add_argument('--dsfolder', default="temp", type=str,
+                        help='The dataset folder name. The default is set to temp.')
     parser.add_argument('--mdpath', default=fph.MODEL_PATH, type=str,
                         help='The path to the output models. The default is set to '
                              'train folder outside the source code.')
     parser.add_argument('--rspath', default=fph.RESULT_PATH, type=str,
                         help='The path to the results. The default is set to result '
                              'folder outside the source code.')
-    parser.add_argument('--rsfolder', default="Prediction_triUMPF", type=str,
-                        help='The result folder name. The default is set to Prediction_triUMPF.')
     parser.add_argument('--logpath', default=fph.LOG_PATH, type=str,
                         help='The path to the log directory.')
 
@@ -231,12 +233,13 @@ def parse_command_line():
                         help='The file name, excluding extension, to save an object. (default value: "triUMPF")')
     parser.add_argument('--dsname', type=str, default='golden',
                         help='The data name used for evaluation. (default value: "golden ")')
-                        
+
     # Arguments for preprocessing dataset
     parser.add_argument('--preprocess-dataset', action='store_true', default=False,
                         help='Preprocess dataset. (default value: False).')
     parser.add_argument('--white-links', action='store_true', default=False,
-                        help='Add no noise to Pathway-Pathway and EC-EC associations. (default value: False).')
+                        help='Add noise to pathway to pathway and enzyme to enzyme '
+                             'associations. (default value: False).')
 
     # Arguments for training and evaluation
     parser.add_argument('--train', action='store_true', default=False,
@@ -250,11 +253,6 @@ def parse_command_line():
                              '(default value: False).')
     parser.add_argument('--parse-pf', action='store_true', default=False,
                         help='Whether to parse Pathologic format file (pf) from a folder (default value: False).')
-    parser.add_argument('--build-features', action='store_true', default=False,
-                        help='Whether to construct features (default value: False).')
-    parser.add_argument('--plot', action='store_true', default=False,
-                        help='Whether to produce various plots from predicted outputs. '
-                             '(default value: False).')
     parser.add_argument('--num-components', default=100, type=int,
                         help='Number of components. (default value: 100).')
     parser.add_argument('--num-communities-p', default=90, type=int,
@@ -277,11 +275,11 @@ def parse_command_line():
                         help='Whether to fit community. (default value: False).')
     parser.add_argument('--fit-pure-comm', action='store_true', default=False,
                         help='Whether to fit community excluding data. (default value: False).')
-    parser.add_argument('--binarize', action='store_true', default=False,
-                        help='Whether to binarize data (set feature values to 0 or 1). (default value: False).')
+    parser.add_argument('--no-binarize', action='store_true', default=False,
+                        help='Whether binarize data (set feature values to 0 or 1). (default value: False).')
     parser.add_argument('--normalize', action='store_true', default=False,
                         help='Whether to normalize data. (default value: False).')
-    parser.add_argument('--use-external-features', action='store_true', default=False,
+    parser.add_argument('--no-external-features', action='store_true', default=False,
                         help='Whether to use external features that are included in data. '
                              '(default value: False).')
     parser.add_argument('--cutting-point', type=int, default=3650,
@@ -304,8 +302,8 @@ def parse_command_line():
                         help="A hyper-parameter to satisfy orthogonal condition. (default value: 1e9).")
     parser.add_argument("--rho", type=float, default=0.01,
                         help="A hyper-parameter to fuse coefficients with association matrix. (default value: 0.01).")
-    parser.add_argument("--lambdas", nargs="+", type=float, default=[0.01, 0.01, 0.01, 0.01, 0.01, 0.01],
-                        help="Six hyper-parameters for constraints. Default is [0.01, 0.01, 7, 0.01, 0.01, 0.01].")
+    parser.add_argument("--lambdas", nargs="+", type=float, default=[0.01, 0.01, 0.01, 0.01, 0.001, 10],
+                        help="Six hyper-parameters for constraints. Default is [0.01, 0.01, 0.01, 0.01, 0.001, 10].")
     parser.add_argument('--eps', default=1e-4, type=float,
                         help='Truncate all values less then this in output to zero. (default value: 1e-4).')
     parser.add_argument("--early-stop", action='store_true', default=False,
@@ -317,11 +315,11 @@ def parse_command_line():
     parser.add_argument("--decision-threshold", type=float, default=0.5,
                         help="The cutoff threshold for triUMPF. (default value: 0.5)")
     parser.add_argument('--top-k', type=int, default=10,
-                        help='Top k features or labels to be considered for computing psp. (default value: 10).')                        
-    parser.add_argument('--ssample-input-size', default=0.05, type=float,
-                        help='The size of input subsample. (default value: 0.05)')
-    parser.add_argument('--ssample-label-size', default=1000, type=int,
-                        help='Maximum number of labels to be sampled. (default value: 1000).')
+                        help='Top k features or labels to be considered for computing psp. (default value: 10).')
+    parser.add_argument('--ssample-input-size', default=0.7, type=float,
+                        help='The size of input subsample. (default value: 0.7)')
+    parser.add_argument('--ssample-label-size', default=2000, type=int,
+                        help='Maximum number of labels to be sampled. (default value: 2000).')
     parser.add_argument('--learning-type', default='optimal', type=str, choices=['optimal', 'sgd'],
                         help='The learning rate schedule. (default value: "optimal")')
     parser.add_argument('--lr', default=0.0001, type=float, help='The learning rate. (default value: 0.0001).')

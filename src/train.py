@@ -26,7 +26,7 @@ def __build_features(X, pathwat_dict, ec_dict, labels_components, node2idx_pathw
     print('\t>> Build abundance and coverage features...')
     list_batches = np.arange(start=0, stop=tmp.shape[0], step=batch_size)
     total_progress = len(list_batches) * len(pathwat_dict.keys())
-    parallel = Parallel(n_jobs=num_jobs, verbose=0)
+    parallel = Parallel(n_jobs=num_jobs, prefer="threads", verbose=0)
     results = parallel(delayed(compute_abd_cov)(tmp[batch:batch + batch_size],
                                                 labels_components, pathwat_dict,
                                                 None, batch_idx, total_progress)
@@ -104,7 +104,7 @@ def __train(arg):
         # load pathway2ec mapping matrix
         print('\t>> Loading label to component mapping file object...')
         pathway2ec_idx = load_data(file_name=arg.pathway2ec_idx_name, load_path=arg.ospath)
-        path2vec_features = np.load(file=os.path.join(arg.mdpath, arg.features_name))
+        path2vec_features = np.load(file=os.path.join(arg.ospath, arg.features_name))
 
         # extracting pathway and ec features
         labels_components = load_data(file_name=arg.pathway2ec_name, load_path=arg.ospath, tag='M')
@@ -144,12 +144,12 @@ def __train(arg):
         tmp = list(ec_dict.keys())
         ec_dict = dict((idx, ec_dict[tmp.index(ec)]) for idx, ec in enumerate(pathway2ec_idx))
         __build_features(X=X, pathwat_dict=pathway_dict, ec_dict=ec_dict, labels_components=labels_components,
-                         node2idx_pathway2ec=node2idx_pathway2ec,
-                         path2vec_features=path2vec_features, file_name=arg.file_name, dspath=arg.dspath,
-                         batch_size=arg.batch, num_jobs=arg.num_jobs)
+                         node2idx_pathway2ec=node2idx_pathway2ec, path2vec_features=path2vec_features,
+                         file_name=arg.file_name, dspath=arg.dspath, batch_size=arg.batch, num_jobs=arg.num_jobs)
 
         ## train size
         if arg.ssample_input_size < 1:
+            print('\t>> Add noise {0}% to pathway2ec...'.format(arg.ssample_input_size * 100))
             # add white noise to M
             train_size = labels_components.shape[0] * arg.ssample_input_size
             idx = np.random.choice(a=np.arange(labels_components.shape[0]), size=int(train_size), replace=False)
@@ -158,6 +158,7 @@ def __train(arg):
         if arg.white_links:
             if arg.ssample_input_size < 1:
                 # add white noise to A
+                print('\t>> Add white noise to pathway to pathway and enzyme to enzyme association matrices')
                 train_size = A.shape[0] * arg.ssample_input_size
                 idx = np.random.choice(a=np.arange(A.shape[0]), size=int(train_size), replace=False)
                 A = lil_matrix(A).toarray()
@@ -229,7 +230,6 @@ def __train(arg):
         model.fit(M=labels_components, W=W, H=H, X=X, y=y, P=P, E=E, A=A, B=B, model_name=arg.model_name,
                   model_path=arg.mdpath, result_path=arg.rspath, display_params=display_params)
 
-
     ##########################################################################################################
     ######################                           EVALUATE                           ######################
     ##########################################################################################################
@@ -258,15 +258,14 @@ def __train(arg):
         else:
             score(y_true=y.toarray(), y_pred=y_pred.toarray(), item_lst=[arg.dsname], six_db=False,
                   top_k=arg.top_k, mode='a', file_name=file_name, save_path=arg.rspath)
-                      
-                      
+
     ##########################################################################################################
     ######################                    PREDICT USING triUMPF                     ######################
     ##########################################################################################################
 
     if arg.predict:
         print('\n{0})- Predicting using a pre-trained triUMPF model...'.format(steps))
-        if arg.pathway_report:
+        if arg.pathway_report or arg.extract_pf:
             print('\t>> Loading biocyc object...')
             # load a biocyc file
             data_object = load_data(file_name=arg.object_name, load_path=arg.ospath, tag='the biocyc object',
@@ -286,38 +285,33 @@ def __train(arg):
             tmp = list(ec_dict.keys())
             ec_dict = dict((idx, ec_dict[tmp.index(ec)]) for idx, ec in enumerate(pathway2ec_idx))
             if arg.extract_pf:
-                X, sample_ids = parse_files(ec_dict=ec_dict, input_folder=arg.dsfolder, rsfolder=arg.rsfolder,
+                X, sample_ids = parse_files(ec_dict=ec_dict, ds_folder=arg.dsfolder, dspath=arg.dspath,
                                             rspath=arg.rspath, num_jobs=arg.num_jobs)
                 print('\t>> Storing X and sample_ids...')
                 save_data(data=X, file_name=arg.file_name + '_X.pkl', save_path=arg.dspath,
                           tag='the pf dataset (X)', mode='w+b', print_tag=False)
                 save_data(data=sample_ids, file_name=arg.file_name + '_ids.pkl', save_path=arg.dspath,
                           tag='samples ids', mode='w+b', print_tag=False)
-                if arg.build_features:
-                    # load a hin file
-                    print('\t>> Loading heterogeneous information network file...')
-                    hin = load_data(file_name=arg.hin_name, load_path=arg.ospath,
-                                    tag='heterogeneous information network',
-                                    print_tag=False)
-                    # get pathway2ec mapping
-                    node2idx_pathway2ec = [node[0] for node in hin.nodes(data=True)]
-                    del hin
-                    print('\t>> Loading path2vec_features file...')
-                    path2vec_features = np.load(file=os.path.join(arg.ospath, arg.features_name))
-                    __build_features(X=X, pathwat_dict=pathway_dict, ec_dict=ec_dict,
-                                     labels_components=labels_components,
-                                     node2idx_pathway2ec=node2idx_pathway2ec,
-                                     path2vec_features=path2vec_features,
-                                     file_name=arg.file_name, dspath=arg.dspath,
-                                     batch_size=arg.batch, num_jobs=arg.num_jobs)
+                print('\t>> Loading heterogeneous information network file...')
+                hin = load_data(file_name=arg.hin_name, load_path=arg.ospath,
+                                tag='heterogeneous information network',
+                                print_tag=False)
+                # get pathway2ec mapping
+                node2idx_pathway2ec = [node[0] for node in hin.nodes(data=True)]
+                del hin
+                print('\t>> Loading path2vec_features file...')
+                path2vec_features = np.load(file=os.path.join(arg.ospath, arg.features_name))
+                __build_features(X=X, pathwat_dict=pathway_dict, ec_dict=ec_dict,
+                                 labels_components=labels_components,
+                                 node2idx_pathway2ec=node2idx_pathway2ec,
+                                 path2vec_features=path2vec_features,
+                                 file_name=arg.file_name, dspath=arg.dspath,
+                                 batch_size=arg.batch, num_jobs=arg.num_jobs)
 
         # load files
         print('\t>> Loading necessary files......')
         X = load_data(file_name=arg.X_name, load_path=arg.dspath, tag="X")
-        sample_ids = np.arange(X.shape[0])
-        if arg.samples_ids is not None:
-            if arg.samples_ids in os.listdir(arg.dspath):
-                sample_ids = load_data(file_name=arg.samples_ids, load_path=arg.dspath, tag="samples ids")
+        tmp = lil_matrix.copy(X)
 
         # load model
         model = load_data(file_name=arg.model_name + '.pkl', load_path=arg.mdpath, tag='triUMPF model')
@@ -333,11 +327,18 @@ def __train(arg):
 
         if arg.pathway_report:
             print('\t>> Synthesizing pathway reports...')
-            synthesize_report(X=X[:, :arg.cutting_point], sample_ids=sample_ids,
-                              y_pred=y_pred, y_dict_ids=pathway_dict, y_common_name=pathway_common_names,
-                              component_dict=ec_dict, labels_components=labels_components, y_pred_score=y_pred_score,
-                              batch_size=arg.batch, num_jobs=arg.num_jobs, rsfolder=arg.rsfolder, rspath=arg.rspath,
-                              dspath=arg.dspath, file_name=arg.file_name + '_triumpf')
+            X = tmp
+            sample_ids = np.arange(X.shape[0])
+            if arg.extract_pf:
+                sample_ids = load_data(file_name=arg.file_name + "_ids.pkl", load_path=arg.dspath, tag="samples ids")
+            else:
+                if arg.samples_ids is not None:
+                    if arg.samples_ids in os.listdir(arg.dspath):
+                        sample_ids = load_data(file_name=arg.samples_ids, load_path=arg.dspath, tag="samples ids")
+            synthesize_report(X=X[:, :arg.cutting_point], sample_ids=sample_ids, y_pred=y_pred, y_dict_ids=pathway_dict,
+                              y_common_name=pathway_common_names, component_dict=ec_dict,
+                              labels_components=labels_components, y_pred_score=y_pred_score, batch_size=arg.batch,
+                              num_jobs=arg.num_jobs, rspath=arg.rspath, dspath=arg.dspath, file_name=arg.file_name)
         else:
             print('\t>> Storing predictions (label index) to: {0:s}'.format(arg.file_name + '_triumpf_y.pkl'))
             save_data(data=y_pred, file_name=arg.file_name + "_triumpf_y.pkl", save_path=arg.dspath,
