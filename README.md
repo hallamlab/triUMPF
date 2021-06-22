@@ -24,7 +24,6 @@ to Escherichia coli O157:H7 str. EDL933, and 2 to Escherichia coli str. MG1655:
 
 See tutorials on the [GitHub wiki](https://github.com/hallamlab/triUMPF/wiki) page for more information and guidelines.
 
-
 ## Citing
 
 If you find *triUMPF* useful in your research, please consider citing the following paper:
