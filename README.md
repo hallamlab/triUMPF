@@ -10,18 +10,6 @@ manifesting diverse multi-label properties, including Tier 1 genomes from the Bi
 Pathway/Genome Databases and low complexity microbial communities. Resulting performance metrics equaled or exceeded
 other prediction methods on organismal genomes with improved prediction outcomes on multi-organism data sets.
 
-The three E.coli genomes can be access from [here](src/sample). The indices correspond: 0 to Escherichia coli CFT073, 1
-to Escherichia coli O157:H7 str. EDL933, and 2 to Escherichia coli str. MG1655:
-
-- "three_ecoli_X.pkl": three E.coli data of size (3, 3650).
-- "three_ecoli_Xe.pkl": three E.coli data of size (3, 3778).
-- "three_ecoli_triumpf_y.pkl": triUMPF (using triUMPF.pkl) predicted pathways on the three E.coli data of size (3, 2526)
-  .
-- "three_ecoli_taxprune_pathologic_y.pkl": Pathologic (with taxonomic pruning option) predicted pathways on the E.coli
-  data of size (3, 2526).
-- "three_ecoli_notaxprune_pathologic_y.pkl": Pathologic (excluding taxonomic pruning option) predicted pathways on the
-  three E.coli data of size (3, 2526).
-
 See tutorials on the [GitHub wiki](https://github.com/hallamlab/triUMPF/wiki) page for more information and guidelines.
 
 ## Citing
