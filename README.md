@@ -17,8 +17,7 @@ See tutorials on the [GitHub wiki](https://github.com/hallamlab/triUMPF/wiki) pa
 If you find *triUMPF* useful in your research, please consider citing the following paper:
 
 - M. A. Basher, Abdur Rahman, McLaughlin, Ryan J., and Hallam, Steven
-  J.. **["Metabolic pathway prediction using non-negative matrix factorization with improved precision"](https://doi.org/10.1101/2020.05.27.119826)**
-  , bioRxiv (2021).
+  J.. **["Metabolic pathway prediction using non-negative matrix factorization with improved precision"](https://doi.org/10.1007/978-3-030-79290-9_4)**, Lecture Notes in Computer Science, vol 12686. Springer, Cham., ICCABS (2020).
 
 ## Contact
 
